@@ -12,56 +12,55 @@ client.on('ready', () => {
     console.log('Logs:');
 });
 
-const apikeys = ["api-key-here", "api-key-here"]; // i registered for multiple api keys in order to increase the maximum number of requests i can use
+const apikeys = ["put-api-key-here", "put-api-key-here"];
 
 const random = Math.floor(Math.random() * apikeys.length);
 
 client.on('messageCreate', async msg => {
     switch (msg.content) {
         case "*gif":
-            const img = await getGif(); //fetches an URL from the API
+            const img = await getGif(); //fetches a URL from the API
             const exampleEmbed = new MessageEmbed()
                 .setColor('#0099ff')
                 .setTitle('Here\'s your cat gif:')
-                .setURL('https://github.com/micgar19/thecatapi-discord-bot')
+                .setURL(img)
                 .setImage(img)
-                .setTimestamp()
-                .setFooter({ text: 'Made by business man#4444', iconURL: 'https://i.imgur.com/1AyUxRE.png' });
+                .setFooter({ text: 'Made by business man#1542', iconURL: 'https://i.imgur.com/1AyUxRE.png' });
             msg.channel.send({ embeds: [exampleEmbed] });
-            console.log('User ' + msg.author.tag + ' ID: ' + msg.author.id + ' ran *gif in Channel: #' + msg.channel.name + ' Server: ' + msg.guild.name)
+            console.log('User: ' + msg.author.tag + ' ID: ' + msg.author.id + ' ran *gif in Channel: #' + msg.channel.name + ' Server: ' + msg.guild.name)
             break;
         case "*image":
             const img1 = await getImage();
             const exampleEmbed1 = new MessageEmbed()
                 .setColor('#0099ff')
                 .setTitle('Here\'s your cat image:')
-                .setURL('https://github.com/micgar19/thecatapi-discord-bot')
+                .setURL(img1)
                 .setImage(img1)
-                .setFooter({ text: 'Made by business man#4444', iconURL: 'https://i.imgur.com/1AyUxRE.png' });
+                .setFooter({ text: 'Made by business man#1542', iconURL: 'https://i.imgur.com/1AyUxRE.png' });
             msg.channel.send({ embeds: [exampleEmbed1] });
-            console.log('User ' + msg.author.tag + ' ID: ' + msg.author.id + ' ran *image in Channel: #' + msg.channel.name + ' Server: ' + msg.guild.name)
+            console.log('User: ' + msg.author.tag + ' ID: ' + msg.author.id + ' ran *image in Channel: #' + msg.channel.name + ' Server: ' + msg.guild.name)
             break;
         case "*help":
             const img2 = await getImage();
             const exampleEmbed2 = new MessageEmbed()
                 .setColor('#0099ff')
                 .setTitle('Help')
-                .setURL('https://github.com/micgar19/thecatapi-discord-bot')
+                .setURL(img2)
                 .addFields({ name: 'Gif', value: '```*gif```Returns a random cat gif.', inline: true }, { name: 'Image', value: '```*image``` to get a random cat image.', inline: true }, )
                 .addField('Help', '```*help```Sends this message.', true)
                 .setImage(img2)
-                .setFooter({ text: 'Made by business man#4444', iconURL: 'https://i.imgur.com/1AyUxRE.png' });
+                .setFooter({ text: 'Made by business man#1542', iconURL: 'https://i.imgur.com/1AyUxRE.png' });
             msg.channel.send({ embeds: [exampleEmbed2] });
-            console.log('User ' + msg.author.tag + ' ID: ' + msg.author.id + ' ran *help in Channel: #' + msg.channel.name + ' Server: ' + msg.guild.name)
+            console.log('User: ' + msg.author.tag + ' ID: ' + msg.author.id + ' ran *help in Channel: #' + msg.channel.name + ' Server: ' + msg.guild.name)
             break;
     }
 })
 
-//add this function below client.on('message' ...
+//add this function below client.on('message'
 async function getGif() {
     const res = await axios.get('https://api.thecatapi.com/v1/images/search?mime_types=gif', {
         headers: {
-            'x-api-key': apikeys[random] // selects a random api key to use, i have 10 so it means my max requests is 100k per month
+            'x-api-key': apikeys[random]
         }
     });
     return res.data[0].url;
