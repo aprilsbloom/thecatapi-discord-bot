@@ -1,14 +1,9 @@
 require('dotenv').config();
 const Discord = require('discord.js');
 const axios = require('axios');
-const { MessageEmbed } = require('discord.js');
-
-
-
-const client = new Discord.Client({ intents: ["GUILDS", "GUILD_MESSAGES"] })
-
-
 const Errorhandler = require("discord-error-handler");
+const { MessageEmbed } = require('discord.js');
+const client = new Discord.Client({ intents: ["GUILDS", "GUILD_MESSAGES"] })
 const handle = new Errorhandler(client, {
     webhook: { id: `webhook-id`, token: `webhook-token` } 
 })
@@ -18,7 +13,7 @@ process.on('unhandledRejection', error => {
 });
 
 client.on('ready', () => {
-    client.user.setActivity(`*help in ${client.guilds.cache.size} Servers `, { type: "LISTENING" })
+    rpc();
     console.log(`Logged in as ${client.user.tag}!`);
     console.log();
     console.log('Logs:');
@@ -85,6 +80,13 @@ async function getImage() {
     });
     return res.data[0].url;
 }
+
+async function rpc() {
+    client.user.setActivity(`*help in ${client.guilds.cache.size} Servers `, { type: "LISTENING" })
+    setTimeout(rpc, 15000);
+}
+
+
 
 //make sure this is the last line
 client.login(process.env.CLIENT_TOKEN); //login to the bot using the token
