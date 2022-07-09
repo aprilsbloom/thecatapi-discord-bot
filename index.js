@@ -37,7 +37,6 @@ client.on('messageCreate', async msg => {
             const gifembed = new MessageEmbed()
                 .setColor('#0099ff')
                 .setTitle('Here\'s your cat gif:')
-                .setURL(gif)
                 .setImage(gif)
                 .setFooter({ text: 'Made by @gifkitties', iconURL: 'https://cdn.discordapp.com/attachments/889397754458169385/985133240098627644/ezgif-3-df748915d9.gif' });
             msg.channel.send({ embeds: [gifembed] });
@@ -48,7 +47,6 @@ client.on('messageCreate', async msg => {
             const imgembed = new MessageEmbed()
                 .setColor('#0099ff')
                 .setTitle('Here\'s your cat image:')
-                .setURL(img)
                 .setImage(img)
                 .setFooter({ text: 'Made by @gifkitties', iconURL: 'https://cdn.discordapp.com/attachments/889397754458169385/985133240098627644/ezgif-3-df748915d9.gif' });
             msg.channel.send({ embeds: [imgembed] });
@@ -59,7 +57,6 @@ client.on('messageCreate', async msg => {
             const exampleEmbed2 = new MessageEmbed()
                 .setColor('#0099ff')
                 .setTitle('Help')
-                .setURL(help)
                 .addFields({ name: 'Gif ', value: '```*gif``` Returns a random cat gif.', inline: true }, { name: 'Image ', value: '```*image``` Returns a random cat image.', inline: true }, )
                 .addField('Help', '```*help```Sends this message.', true)
                 .setImage(help)
@@ -81,7 +78,7 @@ async function getGif() {
 }
 
 async function getImage() {
-    const res = await axios.get('https://api.thecatapi.com/v1/images/search', {
+    const res = await axios.get('https://api.thecatapi.com/v1/images/search?mime_types=jpg,png', {
         headers: {
             'x-api-key': apikeys[random]
         }
