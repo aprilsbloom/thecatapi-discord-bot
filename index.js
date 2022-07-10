@@ -1,16 +1,10 @@
 require('dotenv').config();
 const Discord = require('discord.js');
 const axios = require('axios');
-const Errorhandler = require("discord-error-handler");
 const { MessageEmbed } = require('discord.js');
 const client = new Discord.Client({ intents: ["GUILDS", "GUILD_MESSAGES"] })
-const handle = new Errorhandler(client, {
-    webhook: { id: `webhook-id`, token: `webhook-token` } 
-})
-
-process.on('unhandledRejection', error => {
-    handle.createrr(client, undefined, undefined, error) // sends errors to a discord webhook and handles the errors, instead of putting the bot offline when it encounters an error
-});
+const apikeys = ["put-api-key-here", "put-api-key-here"];
+const random = Math.floor(Math.random() * apikeys.length);
 
 client.on('ready', () => {
     rpc();
@@ -19,44 +13,49 @@ client.on('ready', () => {
     console.log('Logs:');
 });
 
-
-
-const apikeys = ["put-api-key-here", "put-api-key-here"];
-
-const random = Math.floor(Math.random() * apikeys.length);
-
 client.on('messageCreate', async msg => {
     switch (msg.content) {
         case "*gif":
             const gif = await getGif(); //fetches a URL from the API
-            const gifembed = new MessageEmbed()
+            const gif2 = new MessageEmbed()
                 .setColor('#0099ff')
                 .setTitle('Here\'s your cat gif:')
                 .setImage(gif)
                 .setFooter({ text: 'Made by @gifkitties', iconURL: 'https://cdn.discordapp.com/attachments/889397754458169385/985133240098627644/ezgif-3-df748915d9.gif' });
-            msg.channel.send({ embeds: [gifembed] });
+            msg.channel.send({ embeds: [gif2] });
             console.log('User: ' + msg.author.tag + ' ID: ' + msg.author.id + ' ran *gif in Channel: #' + msg.channel.name + ' Server: ' + msg.guild.name)
             break;
         case "*image":
             const img = await getImage();
-            const imgembed = new MessageEmbed()
+            const img2 = new MessageEmbed()
                 .setColor('#0099ff')
                 .setTitle('Here\'s your cat image:')
                 .setImage(img)
                 .setFooter({ text: 'Made by @gifkitties', iconURL: 'https://cdn.discordapp.com/attachments/889397754458169385/985133240098627644/ezgif-3-df748915d9.gif' });
-            msg.channel.send({ embeds: [imgembed] });
+            msg.channel.send({ embeds: [img2] });
             console.log('User: ' + msg.author.tag + ' ID: ' + msg.author.id + ' ran *image in Channel: #' + msg.channel.name + ' Server: ' + msg.guild.name)
+            break;
+        case "*fact":
+            const fact = await getFact();
+            const factimg = await getImage();
+            const fact2 = new MessageEmbed()
+                .setColor('#0099ff')
+                .setTitle('Here\'s your cat fact:')
+                .setDescription(fact)
+                .setImage(factimg)
+                .setFooter({ text: 'Made by @gifkitties', iconURL: 'https://cdn.discordapp.com/attachments/889397754458169385/985133240098627644/ezgif-3-df748915d9.gif' });
+            msg.channel.send({ embeds: [factembed] });
+            console.log('User: ' + msg.author.tag + ' ID: ' + msg.author.id + ' ran *fact in Channel: #' + msg.channel.name + ' Server: ' + msg.guild.name)
             break;
         case "*help":
             const help = await getImage();
-            const exampleEmbed2 = new MessageEmbed()
+            const help2 = new MessageEmbed()
                 .setColor('#0099ff')
                 .setTitle('Help')
-                .addFields({ name: 'Gif ', value: '```*gif``` Returns a random cat gif.', inline: true }, { name: 'Image ', value: '```*image``` Returns a random cat image.', inline: true }, )
-                .addField('Help', '```*help```Sends this message.', true)
+                .addFields({ name: 'Gif ', value: '```*gif``` Returns a random cat gif.', inline: false }, { name: 'Image ', value: '```*image``` Returns a random cat image.', inline: false }, { name: 'Fact ', value: '```*fact``` Returns a cat fact.', inline: false }, { name: 'Help ', value: '```*help```Sends this message.', inline: false } )
                 .setImage(help)
                 .setFooter({ text: 'Made by @gifkitties', iconURL: 'https://cdn.discordapp.com/attachments/889397754458169385/985133240098627644/ezgif-3-df748915d9.gif' });
-            msg.channel.send({ embeds: [exampleEmbed2] });
+            msg.channel.send({ embeds: [help2] });
             console.log('User: ' + msg.author.tag + ' ID: ' + msg.author.id + ' ran *help in Channel: #' + msg.channel.name + ' Server: ' + msg.guild.name)
             break;
     }
@@ -79,6 +78,16 @@ async function getImage() {
         }
     });
     return res.data[0].url;
+}
+
+async function getFact() {
+    const util = require("util");
+    const fs = require("fs");
+    const readFile = util.promisify(fs.readFile);
+    const fileContent = await readFile("catfact.txt", "utf-8");
+    var lines = fileContent.split("\n");
+    var randLineNum = Math.floor(Math.random() * lines.length);
+    return(lines[randLineNum]);
 }
 
 async function rpc() {
