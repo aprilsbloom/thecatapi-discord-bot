@@ -1,5 +1,5 @@
 # thecatapi-discord-bot
-Node.js discord bot that uses https://thecatapi.com/ to send a random cat gif or image
+Discord-js bot that uses https://thecatapi.com/ to send a random cat gif or image
  
 # Installation
 Install the required modules for the bot.
