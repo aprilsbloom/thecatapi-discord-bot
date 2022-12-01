@@ -1,82 +1,108 @@
 import discord
-import requests
-import random
+from cogs.API import Cat
+from typing import GenericAlias
 from discord import app_commands
 from discord.ext import commands
 
-breedlist = 'abys aege abob acur asho awir amau amis bali bamb beng birm bomb bslo bsho bure buri cspa ctif char chau chee csho crex cymr cypr drex dons lihu emau ebur esho hbro hima jbob java khao kora kuri lape mcoo mala manx munc nebe norw ocic orie pers pixi raga ragd rblu sava sfol srex siam sibe sing snow soma sphy tonk toyg tang tvan ycho'
-apikeys = []
-
-headers = {
-    "Accept":
-    "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
-    "Accept-Encoding":
-    "gzip, deflate, br",
-    "Accept-Language":
-    "fr,en-US;q=0.9,en;q=0.8",
-    "User-Agent":
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36"
-}
-
+cat = Cat()
 
 class breedinfo(commands.Cog):
-
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @app_commands.command(name="breedinfo",
-                          description="Sends info on a cat breed.")
-    @app_commands.describe(
-        breed="Your breed of choice that you want to know more about.", )
-    async def breedinfo(self,
-                        interaction: discord.Interaction,
-                        breed: str = 'aaa'):
-        if breed in breedlist:
-            r = requests.get(f'https://api.thecatapi.com/v1/breeds/{breed}',
-                             headers={'x-api-key': random.choice(apikeys)})
-            image = requests.get(
-                f'https://api.thecatapi.com/v1/images/search?mime_types=jpg,png&breed_ids={breed}',
-                headers={
-                    'x-api-key': random.choice(apikeys)
-                }).json()[0]['url']
+    @app_commands.command(name="breedinfo", description="Sends info on a cat breed.")
+    @app_commands.describe(breed="Your breed of choice that you want to know more about.")
+    @app_commands.choices(type=[
+        app_commands.Choice(name="Breed Information", value="Information"),
+        app_commands.Choice(name="Breed Stats", value="Stats"),
+        app_commands.Choice(name="Breed List", value="List")
+    ])
 
-            weightimperial = r.json()['weight']['imperial']
-            weightmetric = r.json()['weight']['metric']
-            temperament = r.json()['temperament']
-            origin = r.json()['origin']
-            life_span = r.json()['life_span']
-            wikipedia_url = r.json()['wikipedia_url']
-            description = r.json()['description']
+    async def breedinfo(self, interaction: discord.Interaction, type: app_commands.Choice[str], breed: str = ''):
+        if type.value == 'Information':
+            if breed in cat.breedList:
+                breedData = cat.get_breed_info(breed)
+                image = cat.image(breed)
+                
+                name = breedData['name']
+                weightimperial = breedData['weight']['imperial']
+                weightmetric = breedData['weight']['metric']
+                temperament = breedData['temperament']
+                origin = breedData['origin']
+                life_span = breedData['life_span']
+                wikipedia_url = breedData['wikipedia_url']
+                description = breedData['description']
 
-            embed = discord.Embed(title=r.json()['name'],
-                                  description=description,
-                                  color=discord.Colour(0x3498DB))
-            embed.add_field(name="Stats",
-                            value=f"""
-                **Weight**\n{weightimperial} lbs / {weightmetric} kg\n
+                embed = discord.Embed(title=name, description=description, color=discord.Colour(cat.embedColor))
+                embed.add_field(name="Stats", value=f"""
+**Weight**\n{weightimperial} lbs / {weightmetric} kg\n
 **Temperament**\n{temperament}\n
 **Origin**\n{origin}\n
 **Life Span**\n{life_span} years\n
-**Wikipedia URL**\n{wikipedia_url}\n""",
-                            inline=True)
+**Wikipedia URL**\n{wikipedia_url}\n""", inline=True)
+                embed.set_image(url=image)
+                await interaction.response.send_message(embed=embed)
+            else:
+                image = cat.image('')
+                embed = discord.Embed(title="Error", description="This breed doesn't exist.\nPlease check you entered the corresponding 4 letter code for your chosen breed by running </breedlist:1>.",color=discord.Colour(cat.embedColor))
+                embed.set_image(url=image)
+                embed.set_footer(text='Made by @kittiesgif', icon_url='https://cdn.discordapp.com/attachments/889397754458169385/985133240098627644/ezgif-3-df748915d9.gif')
+                await interaction.response.send_message(embed=embed)
+        
+        elif type.value == 'Stats':
+            if breed in cat.breedList:
+                image = cat.image(breed)
+                breedData = cat.get_breed_info(breed)
+
+                name = breedData['name']
+                adaptability = breedData['adaptability']
+                affection_level = breedData['affection_level']
+                child_friendly = breedData['child_friendly']
+                dogfriendly = breedData['dog_friendly']
+                energy_level = breedData['energy_level']
+                grooming = breedData['grooming']
+                healthissues = breedData['health_issues']
+                intelligence = breedData['intelligence']
+                shedding = breedData['shedding_level']
+                socialneeds = breedData['social_needs']
+                strangerfriendly = breedData['stranger_friendly']
+                vocalisation = breedData['vocalisation']
+                greenStar = ':green_square:'
+                blackStar = ':black_large_square:'
+
+                embed=discord.Embed(title=name, color=discord.Colour(cat.embedColor))
+                embed.add_field(name="Adaptability", value=f"{greenStar * adaptability}{blackStar * (5 - adaptability)}", inline=True)
+                embed.add_field(name="Affection Level", value=f"{greenStar * affection_level}{blackStar * (5 - affection_level)}", inline=True)
+                embed.add_field(name="Child Friendly", value=f"{greenStar * child_friendly}{blackStar * (5 - child_friendly)}", inline=True)
+                embed.add_field(name="Dog Friendly", value=f"{greenStar * dogfriendly}{blackStar * (5 - dogfriendly)}", inline=True)
+                embed.add_field(name="Energy Level", value=f"{greenStar * energy_level}{blackStar * (5 - energy_level)}", inline=True)
+                embed.add_field(name="Grooming", value=f"{greenStar * grooming}{blackStar * (5 - grooming)}", inline=True)
+                embed.add_field(name="Health Issues", value=f"{greenStar * healthissues}{blackStar * (5 - healthissues)}", inline=True)
+                embed.add_field(name="Intelligence", value=f"{greenStar * intelligence}{blackStar * (5 - intelligence)}", inline=True)
+                embed.add_field(name="Shedding Level", value=f"{greenStar * shedding}{blackStar * (5 - shedding)}", inline=True)
+                embed.add_field(name="Social Needs", value=f"{greenStar * socialneeds}{blackStar * (5 - socialneeds)}", inline=True)
+                embed.add_field(name="Stranger Friendly", value=f"{greenStar * strangerfriendly}{blackStar * (5 - strangerfriendly)}", inline=True)
+                embed.add_field(name="Vocalisation", value=f"{greenStar * vocalisation}{blackStar * (5 - vocalisation)}", inline=True)
+                embed.set_image(url=image)
+                await interaction.response.send_message(embed=embed)
+            else:
+                image = cat.image('')
+                embed = discord.Embed(title="Error", description="This breed doesn't exist.\nPlease check you entered the corresponding 4 letter code for your chosen breed by running </breedlist:1>.", color=discord.Colour(cat.embedColor))
+                embed.set_image(url=image)
+                embed.set_footer(text='Made by @kittiesgif', icon_url='https://cdn.discordapp.com/attachments/889397754458169385/985133240098627644/ezgif-3-df748915d9.gif')
+                await interaction.response.send_message(embed=embed)
+        
+        elif type.value == 'List':
+            breeds = cat.get_breeds()
+            image = cat.image('')
+
+            embed = discord.Embed(title="Breed List", description=f"The bot currently supports a total of {len(breeds)} breeds.\nTo get any information about the breeds listed below, you can run the </breedinfo:1> command.", color=discord.Colour(cat.embedColor))
+            for i in range(0, len(breeds)):
+                embed.add_field(name=breeds[i]['name'], value=f"Code: {breeds[i]['id']}", inline=True)
             embed.set_image(url=image)
+
             await interaction.response.send_message(embed=embed)
-        else:
-            image = requests.get(
-                'https://api.thecatapi.com/v1/images/search?mime_types=jpg,png',
-                headers={
-                    'x-api-key': random.choice(apikeys)
-                }).json()[0]['url']
-            embed = discord.Embed(
-                title="Error",
-                description="This breed doesn't exist.\nPlease check you entered the corresponding 4 letter code for your chosen breed from the PasteBin link in </help:1>.",
-                color=discord.Colour(0x3498DB))
-            embed.set_image(url=image)
-            embed.set_footer(
-                text='Made by @gifkitties',
-                icon_url='https://cdn.discordapp.com/attachments/889397754458169385/985133240098627644/ezgif-3-df748915d9.gif'
-            )
-            await interaction.response.send_message(embed=embed)
+
 
 
 async def setup(bot: commands.Bot):
