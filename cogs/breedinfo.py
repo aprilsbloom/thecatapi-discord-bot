@@ -1,6 +1,5 @@
 import discord
-from cogs.API import Cat
-from typing import GenericAlias
+from API import Cat
 from discord import app_commands
 from discord.ext import commands
 
@@ -10,12 +9,12 @@ class breedinfo(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @app_commands.command(name="breedinfo", description="Sends info on a cat breed.")
+    @app_commands.command(name="breed", description="Sends info on a cat breed.")
     @app_commands.describe(breed="Your breed of choice that you want to know more about.")
     @app_commands.choices(type=[
-        app_commands.Choice(name="Breed Information", value="Information"),
-        app_commands.Choice(name="Breed Stats", value="Stats"),
-        app_commands.Choice(name="Breed List", value="List")
+        app_commands.Choice(name="information", value="Information"),
+        app_commands.Choice(name="stats", value="Stats"),
+        app_commands.Choice(name="list", value="List")
     ])
 
     async def breedinfo(self, interaction: discord.Interaction, type: app_commands.Choice[str], breed: str = ''):
@@ -43,8 +42,8 @@ class breedinfo(commands.Cog):
                 embed.set_image(url=image)
                 await interaction.response.send_message(embed=embed)
             else:
-                image = cat.image('')
-                embed = discord.Embed(title="Error", description="This breed doesn't exist.\nPlease check you entered the corresponding 4 letter code for your chosen breed by running </breedlist:1>.",color=discord.Colour(cat.embedColor))
+                image = cat.image()
+                embed = discord.Embed(title="Error", description="This breed doesn't exist.\nPlease check you entered the corresponding 4 letter code for your chosen breed by running </breed:1> and selecting 'list'.",color=discord.Colour(cat.embedColor))
                 embed.set_image(url=image)
                 embed.set_footer(text='Made by @kittiesgif', icon_url='https://cdn.discordapp.com/attachments/889397754458169385/985133240098627644/ezgif-3-df748915d9.gif')
                 await interaction.response.send_message(embed=embed)
@@ -86,24 +85,22 @@ class breedinfo(commands.Cog):
                 embed.set_image(url=image)
                 await interaction.response.send_message(embed=embed)
             else:
-                image = cat.image('')
-                embed = discord.Embed(title="Error", description="This breed doesn't exist.\nPlease check you entered the corresponding 4 letter code for your chosen breed by running </breedlist:1>.", color=discord.Colour(cat.embedColor))
+                image = cat.image()
+                embed = discord.Embed(title="Error", description="This breed doesn't exist.\nPlease check you entered the corresponding 4 letter code for your chosen breed by running </breed:1> and selecting 'list'.", color=discord.Colour(cat.embedColor))
                 embed.set_image(url=image)
                 embed.set_footer(text='Made by @kittiesgif', icon_url='https://cdn.discordapp.com/attachments/889397754458169385/985133240098627644/ezgif-3-df748915d9.gif')
                 await interaction.response.send_message(embed=embed)
         
         elif type.value == 'List':
             breeds = cat.get_breeds()
-            image = cat.image('')
+            image = cat.image()
 
-            embed = discord.Embed(title="Breed List", description=f"The bot currently supports a total of {len(breeds)} breeds.\nTo get any information about the breeds listed below, you can run the </breedinfo:1> command.", color=discord.Colour(cat.embedColor))
+            embed = discord.Embed(title="Breed List", description=f"The bot currently supports a total of {len(breeds)} breeds.\nTo get any information about the breeds listed below, you can run the </breed:1> command and select either 'list' or 'statistics'.", color=discord.Colour(cat.embedColor))
             for i in range(0, len(breeds)):
                 embed.add_field(name=breeds[i]['name'], value=f"Code: {breeds[i]['id']}", inline=True)
             embed.set_image(url=image)
 
             await interaction.response.send_message(embed=embed)
-
-
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(breedinfo(bot))
