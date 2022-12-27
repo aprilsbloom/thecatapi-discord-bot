@@ -30,7 +30,6 @@ class Bot(commands.Bot):
 # Variables
 bot = Bot()
 cat = Cat()
-token = 'enter-token-here'
 headers = {
     'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
     'Accept-Encoding': 'gzip, deflate, br',
@@ -85,7 +84,7 @@ async def jsonloop():
         webhook = DiscordWebhook(url=url, username='Cat Bot', avatar_url='https://cdn.discordapp.com/avatars/977774728540459008/99b98aa4a7368955a41fe7796cc876de.webp?size=512')
 
         embed = DiscordEmbed(title='Hourly Cat Photo', color=0x3498DB)
-        embed.set_image(url=cat.image(''))
+        embed.set_image(url=cat.image())
         embed.set_footer(text='Made by @kittiesgif', icon_url='https://cdn.discordapp.com/attachments/889397754458169385/985133240098627644/ezgif-3-df748915d9.gif')
 
         webhook.add_embed(embed)
@@ -97,4 +96,4 @@ async def jsonloop():
     print(f'{now} - Finished sending photos to webhooks.')
 
 # Run the bot
-bot.run(token)
+bot.run(cat.token)
