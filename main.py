@@ -26,19 +26,20 @@ class Bot(commands.Bot):
         print(f'Logged in as {self.user}.')
 
         rpc.start()
-        videoScrape.start()
+        scrape.start()
         
 # <-- Functions -->
 def log(s):
     now = datetime.now().strftime('%H:%M:%S')
     print(f'{now} - {s}')
     
+# <-- Tasks -->
 @tasks.loop(minutes=1)
 async def rpc():
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=f"/help in {len(bot.guilds)} servers"))
 
 @tasks.loop(hours=1)
-async def videoScrape():
+async def scrape():
     log('Scraping videos from subreddits')
 
     rs = (grequests.get(f'https://www.reddit.com/r/{u}.json?sort=hot&t=day&limit=100', headers=headers) for u in cat.subList)
@@ -55,27 +56,29 @@ async def videoScrape():
         }
     
     for i in responses:
-        subData = i.json()['data']['children']
-        
-        for i in subData:
-            obj = i['data']
+        try:
+            subData = i.json()['data']['children']
             
-            if not obj['is_video']:
-                continue
-            
-            data['videos'].append({
-                'title': obj['title'].encode().decode('utf8'),
-                'author': obj['author'],
-                'subreddit': obj['subreddit'],
-                'permalink': f'https://www.reddit.com{obj["permalink"]}',
-                'video': obj['secure_media']['reddit_video']['fallback_url'].split('?')[0],
-            })
+            for i in subData:
+                obj = i['data']
+                
+                if not obj['is_video']:
+                    continue
+                
+                data['videos'].append({
+                    'title': obj['title'].encode().decode('utf8'),
+                    'author': obj['author'],
+                    'subreddit': obj['subreddit'],
+                    'permalink': f'https://www.reddit.com{obj["permalink"]}',
+                    'video': obj['secure_media']['reddit_video']['fallback_url'].split('?')[0],
+                })
+        except KeyError:
+            pass
     
     with open('data.json', 'w', encoding='utf8') as f:
         f.write(json.dumps(data))
                 
     log('Finished scraping videos')
-
 
     # Send photos to webhook
     log('Sending photos to webhooks')
@@ -84,8 +87,8 @@ async def videoScrape():
         data = json.load(f)
     
     webhooks = data['webhooks']
-    for url in webhooks.values():
-        webhook = DiscordWebhook(url=url, username='Cat Bot', avatar_url='https://cdn.discordapp.com/avatars/977774728540459008/99b98aa4a7368955a41fe7796cc876de.webp?size=512')
+    for i in webhooks:
+        webhook = DiscordWebhook(url=webhooks[i], username='Cat Bot', avatar_url='https://cdn.discordapp.com/avatars/977774728540459008/99b98aa4a7368955a41fe7796cc876de.webp?size=512')
 
         embed = DiscordEmbed(title='Hourly Cat Photo', color=cat.embedColor)
         embed.set_image(url=cat.image())

@@ -21,8 +21,10 @@ class breedinfo(commands.Cog):
     ])
 
     async def breedinfo(self, interaction: discord.Interaction, type: app_commands.Choice[str], breed: str = ''):
+        breeds = [i['id'] for i in cat.get_breeds()]
+        
         if type.value == 'Information':
-            if breed in cat.breedList:
+            if breed in breeds:
                 breedData = cat.get_breed_info(breed)
                 image = cat.image(breed)
                 
@@ -52,7 +54,7 @@ class breedinfo(commands.Cog):
                 await interaction.response.send_message(embed=embed)
         
         elif type.value == 'Stats':
-            if breed in cat.breedList:
+            if breed in breeds:
                 image = cat.image(breed)
                 breedData = cat.get_breed_info(breed)
 
@@ -97,9 +99,10 @@ class breedinfo(commands.Cog):
             image = cat.image()
 
             embed = discord.Embed(title='Breed List', description=f'The bot currently supports a total of {len(breeds)} breeds.\nTo get any information about the breeds listed below, you can run the </breed:1> command and select either "list" or "statistics".', color=discord.Colour(cat.embedColor))
-            for i in range(0, len(breeds)):
-                embed.add_field(name=breeds[i]['name'], value=f'Code: {breeds[i]["id"]}', inline=True)
             embed.set_image(url=image)
+            
+            for i in breeds:
+                embed.add_field(name=i['name'], value=f'Code: {i["id"]}', inline=True)
 
             await interaction.response.send_message(embed=embed)
 

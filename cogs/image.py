@@ -22,7 +22,9 @@ class image(commands.Cog):
             embed.title = 'Here\'s a cat image:'
             embed.set_image(url=image)
         else:
-            if breed in Cat.breedList:
+            breeds = [i['id'] for i in cat.get_breeds()]
+            
+            if breed in breeds:
                 image = cat.image(breed)
                 breedname = Cat.get_breed_info(self, breed)['name']
                 embed.title = 'Here\'s a cat image:'
