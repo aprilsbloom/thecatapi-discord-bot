@@ -108,35 +108,48 @@ class breeds(commands.Cog):
 
             await interaction.response.send_message(embed=embed, view=pages(interaction, embeds))
 
+
+# You need to call this class from inside of itself
+# because discord doesn't update the buttons until you do
+# this is a really fruistrating bug
+
+# TODO: Rework this class because it's really bad
+
+
 class pages(discord.ui.View):
     def __init__(self, interaction: discord.Interaction, pages: list, previousDisabled: bool = True, nextDisabled: bool = False):
         super().__init__(timeout=None)
         self.interaction = interaction
         self.pages = pages
         self.current_page = 0
-        self.previousDisabled = previousDisabled
-        self.nextDisabled = nextDisabled
 
-    @discord.ui.button(label='Previous', style=discord.ButtonStyle.grey, disabled=self.previousDisabled)
+    global previousDisabled
+    global nextDisabled
+
+    previousDisabled = False
+    nextDisabled = False
+
+    @discord.ui.button(label='Previous', style=discord.ButtonStyle.grey, disabled=previousDisabled)
     async def previous(self, interaction: discord.Interaction, button: discord.ui.Button):
-        self.current_page -= 1
-        self.nextDisabled = False
+        global previousDisabled
+        global nextDisabled
 
-        if self.current_page == 0:
-            self.previousDisabled = True
-            button.disabled = True
+        self.current_page -= 1
+        nextDisabled = True
+
+        print(previousDisabled, nextDisabled)
 
         await interaction.response.edit_message(embed=self.pages[self.current_page], view=self)
 
-    @discord.ui.button(label='Next', style=discord.ButtonStyle.grey, disabled=self.nextDisabled)
+    @discord.ui.button(label='Next', style=discord.ButtonStyle.grey, disabled=nextDisabled)
     async def next(self, interaction: discord.Interaction, button: discord.ui.Button):
+        global previousDisabled
+        global nextDisabled
+
         self.current_page += 1
-        self.previousDisabled = False
+        previousDisabled = True
 
-        if self.current_page == len(self.pages) - 1:
-            self.nextDisabled = True
-
-            button.disabled = True
+        print(previousDisabled, nextDisabled)
 
         await interaction.response.edit_message(embed=self.pages[self.current_page], view=self)
 
