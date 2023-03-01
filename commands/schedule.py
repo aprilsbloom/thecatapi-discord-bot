@@ -1,10 +1,11 @@
 import discord
 import json
-from API import Cat
+import typing
+from utils import cat
 from discord import app_commands
 from discord.ext import commands
 
-cat = Cat()
+cat = cat()
 
 class schedule(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -17,7 +18,7 @@ class schedule(commands.Cog):
         app_commands.Choice(name='remove', value='Remove'),
         app_commands.Choice(name='view', value='View')
     ])
-
+    
     async def schedule(self, interaction: discord.Interaction, type: app_commands.Choice[str], webhook: str = ''):
         if interaction.user.guild_permissions.administrator:
             if type.value == 'Add':
@@ -63,9 +64,9 @@ class schedule(commands.Cog):
         else:
             handleResponse(interaction, 'Error', 'You need to be an administrator to use this command.')
 
-async def handleResponse(interaction, type, error):
+async def handleResponse(interaction, type, text):
     image = cat.image()
-    embed = discord.Embed(title=type, description=error, color=discord.Colour(cat.embedColor))
+    embed = discord.Embed(title=type, description=text, color=discord.Colour(cat.embedColor))
     embed.set_image(url=image)
     embed.set_footer(text='Made by @gifkitties', icon_url='https://cdn.discordapp.com/attachments/889397754458169385/985133240098627644/ezgif-3-df748915d9.gif')
     await interaction.response.send_message(embed=embed, ephemeral=True)

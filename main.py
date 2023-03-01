@@ -1,23 +1,20 @@
 # <-- Imports -->
 import grequests
-import discord
 import asyncio
 import json
 import os
-from API import Cat
-from datetime import datetime
+import discord
 from discord_webhook import DiscordWebhook, DiscordEmbed
 from discord.ext import tasks, commands
+from utils import cat, logger
 
 # <-- Classes -->
 class Bot(commands.Bot):
     def __init__(self):
-        super().__init__(intents=discord.Intents.default(), command_prefix='*')
+        super().__init__(intents=discord.Intents.default(), command_prefix='')
 
     async def setup_hook(self):
-        for i in os.listdir('cogs'):
-            if i.endswith('.py'):
-                await self.load_extension(f'cogs.{i[:-3]}')
+        [await self.load_extension(f'commands.{os.path.splitext(i)[0]}') for i in os.listdir('commands') if i.endswith('.py')]
 
         await bot.tree.sync()
 
@@ -27,12 +24,7 @@ class Bot(commands.Bot):
 
         rpc.start()
         scrape.start()
-        
-# <-- Functions -->
-def log(s):
-    now = datetime.now().strftime('%H:%M:%S')
-    print(f'{now} - {s}')
-    
+
 # <-- Tasks -->
 @tasks.loop(minutes=1)
 async def rpc():
@@ -40,7 +32,7 @@ async def rpc():
 
 @tasks.loop(hours=1)
 async def scrape():
-    log('Scraping videos from subreddits')
+    log.info('Scraping videos from Reddit.')
 
     rs = (grequests.get(f'https://www.reddit.com/r/{u}.json?sort=hot&t=day&limit=100', headers=headers) for u in cat.subList)
     responses = grequests.map(rs)
@@ -54,17 +46,17 @@ async def scrape():
             'webhooks': {},
             'videos': []
         }
-    
+
     for i in responses:
         try:
             subData = i.json()['data']['children']
-            
+
             for i in subData:
                 obj = i['data']
-                
+
                 if not obj['is_video']:
                     continue
-                
+
                 data['videos'].append({
                     'title': obj['title'].encode().decode('utf8'),
                     'author': obj['author'],
@@ -73,24 +65,24 @@ async def scrape():
                     'video': obj['secure_media']['reddit_video']['fallback_url'].split('?')[0],
                 })
         except KeyError:
-            pass
-    
+            logger.error(f"Error scraping videos from {i['data']['children'][0]['data']['subreddit']}.")
+
     with open('data.json', 'w', encoding='utf8') as f:
         f.write(json.dumps(data))
-                
-    log('Finished scraping videos')
+
+    log.success('Finished scraping videos from Reddit!')
 
     # Send photos to webhook
-    log('Sending photos to webhooks')
+    log.info('Sending photos to webhooks.')
 
     with open('data.json', 'r', encoding='utf8') as f:
         data = json.load(f)
-    
+
     webhooks = data['webhooks']
     for i in webhooks:
         webhook = DiscordWebhook(url=webhooks[i], username='Cat Bot', avatar_url='https://cdn.discordapp.com/avatars/977774728540459008/99b98aa4a7368955a41fe7796cc876de.webp?size=512')
 
-        embed = DiscordEmbed(title='Hourly Cat Photo', color=cat.embedColor)
+        embed = DiscordEmbed(title='Hourly cat Photo', color=cat.embedColor)
         embed.set_image(url=cat.image())
         embed.set_footer(text='Made by @gifkitties', icon_url='https://cdn.discordapp.com/attachments/889397754458169385/985133240098627644/ezgif-3-df748915d9.gif')
 
@@ -98,12 +90,13 @@ async def scrape():
         webhook.execute()
 
         await asyncio.sleep(2)
-    
-    log('Finished sending photos to webhooks')
+
+    log.success('Finished sending photos to webhooks!')
 
 # <-- Variables -->
 bot = Bot()
-cat = Cat()
+cat = cat()
+log = logger()
 token = ''
 headers = {
     'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
@@ -113,9 +106,4 @@ headers = {
 }
 
 # <-- Main -->
-previoushour = datetime.now().hour
-while True:
-    currenthour = datetime.now().hour
-    if currenthour != previoushour:
-        bot.run(token)
-        break
+bot.run(token)

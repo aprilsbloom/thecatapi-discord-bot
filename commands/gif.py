@@ -1,9 +1,9 @@
 import discord
-from API import Cat
+from utils import cat
 from discord import app_commands
 from discord.ext import commands
 
-cat = Cat()
+cat = cat()
 
 class gif(commands.Cog):
     def __init__(self, bot: commands.Bot):

@@ -1,9 +1,9 @@
 import discord
-from API import Cat
+from utils import cat
 from discord import app_commands
 from discord.ext import commands
 
-cat = Cat()
+cat = cat()
 
 class help(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -18,7 +18,7 @@ class help(commands.Cog):
         embed.add_field(name='Image', value='Sends a cat image.\nInputting a breed ID will allow you to recieve images of a specific cat breed.', inline=False)
         embed.add_field(name='Fact', value='Sends a fact about cats.', inline=False)
         embed.add_field(name='Video', value='Sends a cat video.', inline=False)
-        embed.add_field(name='Breed', value='Provides information or statistics about a specific cat breed, or lists all supported cat breeds for the bot.', inline=False)
+        embed.add_field(name='Breeds', value='Provides information or statistics about a specific cat breed, or lists all supported cat breeds for the bot.', inline=False)
         embed.add_field(name='Schedule', value='The bot will send a message hourly with a random cat photo once provided with a Discord Webhook.', inline=False)
         embed.add_field(name='Help', value='Sends a list of commands.', inline=False)
         embed.set_image(url=image)

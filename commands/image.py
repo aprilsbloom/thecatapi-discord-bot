@@ -1,10 +1,10 @@
 import discord
 import urllib.parse
-from API import Cat
+from utils import cat
 from discord import app_commands
 from discord.ext import commands
 
-cat = Cat()
+cat = cat()
 error = 'An error occured, please try again later.'
 
 class image(commands.Cog):
@@ -26,7 +26,7 @@ class image(commands.Cog):
             
             if breed in breeds:
                 image = cat.image(breed)
-                breedname = Cat.get_breed_info(self, breed)['name']
+                breedname = cat.get_breed_info(self, breed)['name']
                 embed.title = 'Here\'s a cat image:'
                 embed.description = f'Breed: {breedname}'
                 embed.set_image(url=image)

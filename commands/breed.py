@@ -1,18 +1,18 @@
 
 import discord
-from API import Cat
+from utils import cat
 from discord import app_commands
 from discord.ext import commands
 
-cat = Cat()
+cat = cat()
 greenStar = ':green_square:'
 blackStar = ':black_large_square:'
 
-class breedinfo(commands.Cog):
+class breeds(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @app_commands.command(name='breed', description='Sends info on a cat breed.')
+    @app_commands.command(name='breeds', description='Sends info on a cat breed.')
     @app_commands.describe(breed='Your breed of choice that you want to know more about.')
     @app_commands.choices(type=[
         app_commands.Choice(name='information', value='Information'),
@@ -20,14 +20,19 @@ class breedinfo(commands.Cog):
         app_commands.Choice(name='list', value='List')
     ])
 
-    async def breedinfo(self, interaction: discord.Interaction, type: app_commands.Choice[str], breed: str = ''):
-        breeds = [i['id'] for i in cat.get_breeds()]
-        
+    async def breeds(self, interaction: discord.Interaction, type: app_commands.Choice[str], breed: str = ''):
+        breeds = cat.get_breeds()
+        breedIDs = [i['id'] for i in breeds]
+
+        if breed in breedIDs:
+            image = cat.image(breed)
+        else:
+            image = cat.image()
+
         if type.value == 'Information':
-            if breed in breeds:
+            if breed in breedIDs:
                 breedData = cat.get_breed_info(breed)
-                image = cat.image(breed)
-                
+
                 name = breedData['name']
                 weightimperial = breedData['weight']['imperial']
                 weightmetric = breedData['weight']['metric']
@@ -47,15 +52,12 @@ class breedinfo(commands.Cog):
                 embed.set_image(url=image)
                 await interaction.response.send_message(embed=embed)
             else:
-                image = cat.image()
-                embed = discord.Embed(title='Error', description='This breed doesn\'t exist.\nPlease check you entered the corresponding 4 letter code for your chosen breed by running </breed:1> and selecting "list".',color=discord.Colour(cat.embedColor))
+                embed = discord.Embed(title='Error', description='This breed doesn\'t exist.\nPlease check you entered the corresponding 4 letter code for your chosen breed by running </breeds:1> and selecting "list".',color=discord.Colour(cat.embedColor))
                 embed.set_image(url=image)
                 embed.set_footer(text='Made by @gifkitties', icon_url='https://cdn.discordapp.com/attachments/889397754458169385/985133240098627644/ezgif-3-df748915d9.gif')
                 await interaction.response.send_message(embed=embed)
-        
         elif type.value == 'Stats':
-            if breed in breeds:
-                image = cat.image(breed)
+            if breed in breedIDs:
                 breedData = cat.get_breed_info(breed)
 
                 name = breedData['name']
@@ -88,23 +90,62 @@ class breedinfo(commands.Cog):
                 embed.set_image(url=image)
                 await interaction.response.send_message(embed=embed)
             else:
-                image = cat.image()
-                embed = discord.Embed(title='Error', description='This breed doesn\'t exist.\nPlease check you entered the corresponding 4 letter code for your chosen breed by running </breed:1> and selecting "list".', color=discord.Colour(cat.embedColor))
+                embed = discord.Embed(title='Error', description='This breed doesn\'t exist.\nPlease check you entered the corresponding 4 letter code for your chosen breed by running </breeds:1> and selecting "list".', color=discord.Colour(cat.embedColor))
                 embed.set_image(url=image)
                 embed.set_footer(text='Made by @gifkitties', icon_url='https://cdn.discordapp.com/attachments/889397754458169385/985133240098627644/ezgif-3-df748915d9.gif')
                 await interaction.response.send_message(embed=embed)
-        
         elif type.value == 'List':
-            breeds = cat.get_breeds()
-            image = cat.image()
+            embeds = []
+            for i in range(0, len(breeds), 10):
 
-            embed = discord.Embed(title='Breed List', description=f'The bot currently supports a total of {len(breeds)} breeds.\nTo get any information about the breeds listed below, you can run the </breed:1> command and select either "list" or "statistics".', color=discord.Colour(cat.embedColor))
-            embed.set_image(url=image)
-            
-            for i in breeds:
-                embed.add_field(name=i['name'], value=f'Code: {i["id"]}', inline=True)
+                embed = discord.Embed(title='Breed List', description=f'The bot currently supports a total of {len(breeds)} breeds.\nTo get any information about the breeds listed below, you can run the </breeds:1> command and select either "information" or "statistics".', color=discord.Colour(cat.embedColor))
 
-            await interaction.response.send_message(embed=embed)
+                for breed in breeds[i:i+10]:
+                    embed.add_field(name=breed['name'], value=breed['id'], inline=True)
+
+                embeds.append(embed)
+
+
+            await interaction.response.send_message(embed=embed, view=pages(interaction, embeds))
+
+class pages(discord.ui.View):
+    def __init__(self, interaction: discord.Interaction, pages: list, previousDisabled: bool = True, nextDisabled: bool = False):
+        super().__init__(timeout=None)
+        self.interaction = interaction
+        self.pages = pages
+        self.current_page = 0
+        self.previousDisabled = previousDisabled
+        self.nextDisabled = nextDisabled
+
+    @discord.ui.button(label='Previous', style=discord.ButtonStyle.grey, disabled=self.previousDisabled)
+    async def previous(self, interaction: discord.Interaction, button: discord.ui.Button):
+        self.current_page -= 1
+        self.nextDisabled = False
+
+        if self.current_page == 0:
+            self.previousDisabled = True
+            button.disabled = True
+
+        await interaction.response.edit_message(embed=self.pages[self.current_page], view=self)
+
+    @discord.ui.button(label='Next', style=discord.ButtonStyle.grey, disabled=self.nextDisabled)
+    async def next(self, interaction: discord.Interaction, button: discord.ui.Button):
+        self.current_page += 1
+        self.previousDisabled = False
+
+        if self.current_page == len(self.pages) - 1:
+            self.nextDisabled = True
+
+            button.disabled = True
+
+        await interaction.response.edit_message(embed=self.pages[self.current_page], view=self)
+
+
+    async def on_timeout(self) -> None:
+        for button in self.children:
+            button.disabled = True
+
+        await self.message.edit(view=self)
 
 async def setup(bot: commands.Bot):
-    await bot.add_cog(breedinfo(bot))
+    await bot.add_cog(breeds(bot))
