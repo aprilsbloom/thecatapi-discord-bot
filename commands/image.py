@@ -10,32 +10,30 @@ error = 'An error occured, please try again later.'
 class image(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
-    
+
     @app_commands.command(name = 'image', description = 'Sends a cat image.')
 
     async def image(self, interaction: discord.Interaction, breed: str = ''):
-        embed = discord.Embed(color=discord.Colour(cat.embedColor))
-        embed.set_footer(text='Made by @gifkitties', icon_url='https://cdn.discordapp.com/attachments/889397754458169385/985133240098627644/ezgif-3-df748915d9.gif')
-        
         if breed == '':
             image = cat.image()
-            embed.title = 'Here\'s a cat image:'
+            embed = discord.Embed(title='Here\'s a cat image:', color=discord.Colour(cat.embedColor))
             embed.set_image(url=image)
+            embed.set_footer(text='Made by @gifkitties', icon_url='https://cdn.discordapp.com/attachments/889397754458169385/985133240098627644/ezgif-3-df748915d9.gif')
         else:
-            breeds = [i['id'] for i in cat.get_breeds()]
-            
-            if breed in breeds:
+            breedIDs = [i['id'] for i in cat.get_breeds()]
+
+            if breed in breedIDs:
                 image = cat.image(breed)
-                breedname = cat.get_breed_info(self, breed)['name']
-                embed.title = 'Here\'s a cat image:'
-                embed.description = f'Breed: {breedname}'
+                breedname = cat.get_breed_info(breed)['name']
+                embed = discord.Embed(title='Here\'s a cat image:', description = f'Breed: {breedname}', color=discord.Colour(cat.embedColor))
                 embed.set_image(url=image)
+                embed.set_footer(text='Made by @gifkitties', icon_url='https://cdn.discordapp.com/attachments/889397754458169385/985133240098627644/ezgif-3-df748915d9.gif')
             else:
                 image = cat.image()
-                embed.title = 'Error'
-                embed.description = 'This breed doesn\'t exist. Please check your spelling and try again.'
+                embed = discord.Embed(title='Error', description = 'This breed doesn\'t exist. Please check your spelling and try again.', color=discord.Colour.red())
                 embed.set_image(url=image)
-        
+                embed.set_footer(text='Made by @gifkitties', icon_url='https://cdn.discordapp.com/attachments/889397754458169385/985133240098627644/ezgif-3-df748915d9.gif')
+
         await interaction.response.send_message(embed=embed)
 
 

@@ -64,6 +64,7 @@ async def scrape():
                     'permalink': f'https://www.reddit.com{obj["permalink"]}',
                     'video': obj['secure_media']['reddit_video']['fallback_url'].split('?')[0],
                 })
+
         except KeyError:
             logger.error(f"Error scraping videos from {i['data']['children'][0]['data']['subreddit']}.")
 
