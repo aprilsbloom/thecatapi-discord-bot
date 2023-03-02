@@ -1,4 +1,4 @@
-
+import random
 import discord
 from utils import cat
 from discord import app_commands
@@ -7,6 +7,61 @@ from discord.ext import commands
 cat = cat()
 greenStar = ':green_square:'
 blackStar = ':black_large_square:'
+
+# You need to call this class from inside of itself
+# because discord doesn't update the buttons until you do
+# this is a really fruistrating bug
+
+# TODO: Rework this class because it's really bad
+
+class pages(discord.ui.View):
+    def __init__(self, interaction: discord.Interaction, pages: list):
+        super().__init__(timeout=None)
+        self.interaction = interaction
+        self.pages = pages
+        self.current_page = 0
+
+    @discord.ui.button(label='Previous', style=discord.ButtonStyle.grey, disabled=True)
+    async def previous(self, interaction: discord.Interaction, button: discord.ui.Button):
+        self.current_page -= 1
+        image = cat.image()
+        self.pages[self.current_page].set_image(url=image)
+
+        if self.current_page == 0:
+            for i in self.children:
+                if i.label == 'Previous':
+                    i.disabled = True
+                elif i.label == 'Next':
+                    i.disabled = False
+        else:
+            for i in self.children:
+                if i.label == 'Previous':
+                    i.disabled = False
+                elif i.label == 'Next':
+                    i.disabled = False
+
+        await interaction.response.edit_message(embed=self.pages[self.current_page], view=self)
+
+    @discord.ui.button(label='Next', style=discord.ButtonStyle.grey)
+    async def next(self, interaction: discord.Interaction, button: discord.ui.Button):
+        self.current_page += 1
+        image = cat.image()
+        self.pages[self.current_page].set_image(url=image)
+
+        if self.current_page == len(self.pages) - 1:
+            for i in self.children:
+                if i.label == 'Next':
+                    i.disabled = True
+                elif i.label == 'Previous':
+                    i.disabled = False
+        else:
+            for i in self.children:
+                if i.label == 'Next':
+                    i.disabled = False
+                elif i.label == 'Previous':
+                    i.disabled = False
+
+        await interaction.response.edit_message(embed=self.pages[self.current_page], view=self)
 
 class breeds(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -33,22 +88,13 @@ class breeds(commands.Cog):
             if breed in breedIDs:
                 breedData = cat.get_breed_info(breed)
 
-                name = breedData['name']
-                weightimperial = breedData['weight']['imperial']
-                weightmetric = breedData['weight']['metric']
-                temperament = breedData['temperament']
-                origin = breedData['origin']
-                life_span = breedData['life_span']
-                wikipedia_url = breedData['wikipedia_url']
-                description = breedData['description']
-
-                embed = discord.Embed(title=name, description=description, color=discord.Colour(cat.embedColor))
+                embed = discord.Embed(title=breedData['name'], description=breedData['description'], color=discord.Colour(cat.embedColor))
                 embed.add_field(name='Stats', value=f'''
-**Weight**\n{weightimperial} lbs / {weightmetric} kg\n
-**Temperament**\n{temperament}\n
-**Origin**\n{origin}\n
-**Life Span**\n{life_span} years\n
-**Wikipedia URL**\n{wikipedia_url}\n''', inline=True)
+**Weight**\n{breedData['weight']['imperial']} lbs / {breedData['weight']['metric']} kg\n
+**Temperament**\n{breedData['temperament']}\n
+**Origin**\n{breedData['origin']}\n
+**Life Span**\n{breedData['life_span']} years\n
+**Wikipedia URL**\n{breedData['wikipedia_url']}\n''', inline=True)
                 embed.set_image(url=image)
                 await interaction.response.send_message(embed=embed)
             else:
@@ -56,37 +102,24 @@ class breeds(commands.Cog):
                 embed.set_image(url=image)
                 embed.set_footer(text='Made by @gifkitties', icon_url='https://cdn.discordapp.com/attachments/889397754458169385/985133240098627644/ezgif-3-df748915d9.gif')
                 await interaction.response.send_message(embed=embed)
+
         elif type.value == 'Stats':
             if breed in breedIDs:
                 breedData = cat.get_breed_info(breed)
 
-                name = breedData['name']
-                adaptability = breedData['adaptability']
-                affection_level = breedData['affection_level']
-                child_friendly = breedData['child_friendly']
-                dogfriendly = breedData['dog_friendly']
-                energy_level = breedData['energy_level']
-                grooming = breedData['grooming']
-                healthissues = breedData['health_issues']
-                intelligence = breedData['intelligence']
-                shedding = breedData['shedding_level']
-                socialneeds = breedData['social_needs']
-                strangerfriendly = breedData['stranger_friendly']
-                vocalisation = breedData['vocalisation']
-
-                embed=discord.Embed(title=name, color=discord.Colour(cat.embedColor))
-                embed.add_field(name='Adaptability', value=f'{greenStar * adaptability}{blackStar * (5 - adaptability)}', inline=True)
-                embed.add_field(name='Affection Level', value=f'{greenStar * affection_level}{blackStar * (5 - affection_level)}', inline=True)
-                embed.add_field(name='Child Friendly', value=f'{greenStar * child_friendly}{blackStar * (5 - child_friendly)}', inline=True)
-                embed.add_field(name='Dog Friendly', value=f'{greenStar * dogfriendly}{blackStar * (5 - dogfriendly)}', inline=True)
-                embed.add_field(name='Energy Level', value=f'{greenStar * energy_level}{blackStar * (5 - energy_level)}', inline=True)
-                embed.add_field(name='Grooming', value=f'{greenStar * grooming}{blackStar * (5 - grooming)}', inline=True)
-                embed.add_field(name='Health Issues', value=f'{greenStar * healthissues}{blackStar * (5 - healthissues)}', inline=True)
-                embed.add_field(name='Intelligence', value=f'{greenStar * intelligence}{blackStar * (5 - intelligence)}', inline=True)
-                embed.add_field(name='Shedding Level', value=f'{greenStar * shedding}{blackStar * (5 - shedding)}', inline=True)
-                embed.add_field(name='Social Needs', value=f'{greenStar * socialneeds}{blackStar * (5 - socialneeds)}', inline=True)
-                embed.add_field(name='Stranger Friendly', value=f'{greenStar * strangerfriendly}{blackStar * (5 - strangerfriendly)}', inline=True)
-                embed.add_field(name='Vocalisation', value=f'{greenStar * vocalisation}{blackStar * (5 - vocalisation)}', inline=True)
+                embed=discord.Embed(title=breedData['name'], color=discord.Colour(cat.embedColor))
+                embed.add_field(name='Adaptability', value=f'{greenStar * breedData["adaptability"]}{blackStar * (5 - breedData["adaptability"])}', inline=True)
+                embed.add_field(name='Affection Level', value=f'{greenStar * breedData["affection_level"]}{blackStar * (5 - breedData["affection_level"])}', inline=True)
+                embed.add_field(name='Child Friendly', value=f'{greenStar * breedData["child_friendly"]}{blackStar * (5 - breedData["child_friendly"])}', inline=True)
+                embed.add_field(name='Dog Friendly', value=f'{greenStar * breedData["dog_friendly"]}{blackStar * (5 - breedData["dog_friendly"])}', inline=True)
+                embed.add_field(name='Energy Level', value=f'{greenStar * breedData["energy_level"]}{blackStar * (5 - breedData["energy_level"])}', inline=True)
+                embed.add_field(name='Grooming', value=f'{greenStar * breedData["grooming"]}{blackStar * (5 - breedData["grooming"])}', inline=True)
+                embed.add_field(name='Health Issues', value=f'{greenStar * breedData["health_issues"]}{blackStar * (5 - breedData["health_issues"])}', inline=True)
+                embed.add_field(name='Intelligence', value=f'{greenStar * breedData["intelligence"]}{blackStar * (5 - breedData["intelligence"])}', inline=True)
+                embed.add_field(name='Shedding Level', value=f'{greenStar * breedData["shedding_level"]}{blackStar * (5 - breedData["shedding_level"])}', inline=True)
+                embed.add_field(name='Social Needs', value=f'{greenStar * breedData["social_needs"]}{blackStar * (5 - breedData["social_needs"])}', inline=True)
+                embed.add_field(name='Stranger Friendly', value=f'{greenStar * breedData["stranger_friendly"]}{blackStar * (5 - breedData["stranger_friendly"])}', inline=True)
+                embed.add_field(name='Vocalisation', value=f'{greenStar * breedData["vocalisation"]}{blackStar * (5 - breedData["vocalisation"])}', inline=True)
                 embed.set_image(url=image)
                 await interaction.response.send_message(embed=embed)
             else:
@@ -94,71 +127,24 @@ class breeds(commands.Cog):
                 embed.set_image(url=image)
                 embed.set_footer(text='Made by @gifkitties', icon_url='https://cdn.discordapp.com/attachments/889397754458169385/985133240098627644/ezgif-3-df748915d9.gif')
                 await interaction.response.send_message(embed=embed)
+
         elif type.value == 'List':
             embeds = []
-            for i in range(0, len(breeds), 10):
+            count = 0
 
+            for i in range(0, len(breeds), 10):
+                count += 1
                 embed = discord.Embed(title='Breed List', description=f'The bot currently supports a total of {len(breeds)} breeds.\nTo get any information about the breeds listed below, you can run the </breeds:1> command and select either "information" or "statistics".', color=discord.Colour(cat.embedColor))
 
                 for breed in breeds[i:i+10]:
                     embed.add_field(name=breed['name'], value=breed['id'], inline=True)
 
+                embed.set_footer(text=f'Page {count} of {len(breeds) // 10 + 1}')
+
                 embeds.append(embed)
 
-
-            await interaction.response.send_message(embed=embed, view=pages(interaction, embeds))
-
-
-# You need to call this class from inside of itself
-# because discord doesn't update the buttons until you do
-# this is a really fruistrating bug
-
-# TODO: Rework this class because it's really bad
-
-
-class pages(discord.ui.View):
-    def __init__(self, interaction: discord.Interaction, pages: list, previousDisabled: bool = True, nextDisabled: bool = False):
-        super().__init__(timeout=None)
-        self.interaction = interaction
-        self.pages = pages
-        self.current_page = 0
-
-    global previousDisabled
-    global nextDisabled
-
-    previousDisabled = False
-    nextDisabled = False
-
-    @discord.ui.button(label='Previous', style=discord.ButtonStyle.grey, disabled=previousDisabled)
-    async def previous(self, interaction: discord.Interaction, button: discord.ui.Button):
-        global previousDisabled
-        global nextDisabled
-
-        self.current_page -= 1
-        nextDisabled = True
-
-        print(previousDisabled, nextDisabled)
-
-        await interaction.response.edit_message(embed=self.pages[self.current_page], view=self)
-
-    @discord.ui.button(label='Next', style=discord.ButtonStyle.grey, disabled=nextDisabled)
-    async def next(self, interaction: discord.Interaction, button: discord.ui.Button):
-        global previousDisabled
-        global nextDisabled
-
-        self.current_page += 1
-        previousDisabled = True
-
-        print(previousDisabled, nextDisabled)
-
-        await interaction.response.edit_message(embed=self.pages[self.current_page], view=self)
-
-
-    async def on_timeout(self) -> None:
-        for button in self.children:
-            button.disabled = True
-
-        await self.message.edit(view=self)
+            embeds[0].set_image(url=cat.image())
+            await interaction.response.send_message(embed=embeds[0], view=pages(interaction, embeds))
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(breeds(bot))
