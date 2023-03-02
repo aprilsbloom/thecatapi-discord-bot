@@ -19,7 +19,7 @@ You can then run `main.py` to launch the bot.
 
 - Image
   - This command allows you to fetch a random cat image. It takes an optional argument for the Breed ID, which can show you images of a specific breed.
-  - You can fetch a list of Breed IDs that work with the bot by running `/breedinfo` and selecting `Breed List` from the dropdown.
+  - You can fetch a list of Breed IDs that work with the bot by running `/breeds` and selecting `List` from the dropdown.
 
 - Fact
   - This command fetches a random fact about cats. I used [my own collection of cat facts](https://gist.githubusercontent.com/paintingofblue/657d0c4d1202374889ce4a98a6b7f35f/raw/catfacts.txt) for this command.
