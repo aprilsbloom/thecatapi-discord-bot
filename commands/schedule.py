@@ -1,10 +1,11 @@
 import discord
 import json
-from API import Cat
+import typing
+from utils import cat
 from discord import app_commands
 from discord.ext import commands
 
-cat = Cat()
+cat = cat()
 
 class schedule(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -35,7 +36,7 @@ class schedule(commands.Cog):
                         handleResponse(interaction, 'Error', 'This webhook is already registered.')
                 else:
                     handleResponse(interaction, 'Error', 'You need to provide a valid webhook url.')
-            
+
             elif type.value == 'Remove':
                 if webhook.startswith('https://discord.com/api/webhooks/'):
                     with open('data.json', 'r', encoding='utf8') as f:
@@ -51,21 +52,27 @@ class schedule(commands.Cog):
                         handleResponse(interaction, 'Error', 'This webhook is not registered for this server.')
                 else:
                     handleResponse(interaction, 'Error', 'You need to provide a valid webhook url.')
-            
+
             elif type.value == 'View':
                 with open('data.json', 'r', encoding='utf8') as f:
                     data = json.load(f)
-                
+
                 if str(interaction.guild.id) in data['webhooks'].keys():
                     handleResponse(interaction, 'Success', f'Your webhook is: `{data["webhooks"][str(interaction.guild.id)]}`.')
                 else:
-                    handleResponse(interaction, 'Error', 'No webhooks for this server were found.')   
+                    handleResponse(interaction, 'Error', 'No webhooks for this server were found.')
         else:
             handleResponse(interaction, 'Error', 'You need to be an administrator to use this command.')
 
-async def handleResponse(interaction, type, error):
+async def handleResponse(interaction, type, text):
     image = cat.image()
-    embed = discord.Embed(title=type, description=error, color=discord.Colour(cat.embedColor))
+    embed = discord.Embed(title=type, description=text)
+
+    if type == 'Success':
+        embed.color = discord.Colour(cat.embedColor)
+    elif type == 'Error':
+        embed.color = discord.Colour.red()
+
     embed.set_image(url=image)
     embed.set_footer(text='Made by @gifkitties', icon_url='https://cdn.discordapp.com/attachments/889397754458169385/985133240098627644/ezgif-3-df748915d9.gif')
     await interaction.response.send_message(embed=embed, ephemeral=True)

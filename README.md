@@ -30,19 +30,18 @@ You can then run `main.py` to launch the bot.
 - Breed Info
   - This command has 2 different arguments. It can be used to show a description of your chosen breed, to show statistics about your breed, as well as list all supported breeds by the bot.
   - Information
-    - Using the Breed ID `acur` to fetch information about the American Curl provides us with the following information 
-    
-    
+    - Using the Breed ID `acur` to fetch information about the American Curl provides us with the following information
+
     <img style="width: 25%;" src="https://user-images.githubusercontent.com/90877067/209638911-d472e143-e587-4204-ab6f-9868d5757426.png">
   
   - Statistics
-    - Using the Breed ID `acur` to fetch statistics about the American Curl provides us with the following information 
-    
+    - Using the Breed ID `acur` to fetch statistics about the American Curl provides us with the following information
+
     <img style="width: 25%;" src="https://user-images.githubusercontent.com/90877067/209639566-cb087fc9-1139-4444-88fb-3ad9caf4a983.png">
   
   - List
-    - Running this command with the `List` argument shows us a list of 4 letter codes we can use with the bot. 
-    
+    - Running this command with the `List` argument shows us a list of 4 letter codes we can use with the bot.
+
     <img style="width: 25%;" src="https://user-images.githubusercontent.com/90877067/209639799-ff3489e7-0e84-4bdd-b790-8044894380e9.png">
 
 - Schedule
