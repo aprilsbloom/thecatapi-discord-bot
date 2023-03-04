@@ -1,25 +1,23 @@
 import discord
 import json
-import typing
-from utils import cat
-from discord import app_commands
 from discord.ext import commands
+from utils import Cat
 
-cat = cat()
+cat = Cat()
 
 class schedule(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @app_commands.command(name='schedule', description='Sends a cat image on an hourly basis.' )
-    @app_commands.describe(type='Whether to add, remove, or view your webhook from the schedule.', webhook='The webhook to add to the schedule.')
-    @app_commands.choices(type=[
-        app_commands.Choice(name='add', value='Add'),
-        app_commands.Choice(name='remove', value='Remove'),
-        app_commands.Choice(name='view', value='View')
+    @discord.app_commands.command(name='schedule', description='Sends a cat image on an hourly basis.' )
+    @discord.app_commands.describe(type='Whether to add, remove, or view your webhook from the schedule.', webhook='The webhook to add to the schedule.')
+    @discord.app_commands.choices(type=[
+        discord.app_commands.Choice(name='add', value='Add'),
+        discord.app_commands.Choice(name='remove', value='Remove'),
+        discord.app_commands.Choice(name='view', value='View')
     ])
 
-    async def schedule(self, interaction: discord.Interaction, type: app_commands.Choice[str], webhook: str = ''):
+    async def schedule(self, interaction: discord.Interaction, type: discord.app_commands.Choice[str], webhook: str = ''):
         if interaction.user.guild_permissions.administrator:
             if type.value == 'Add':
                 if webhook.startswith('https://discord.com/api/webhooks/'):

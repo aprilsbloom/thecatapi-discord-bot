@@ -1,10 +1,8 @@
-import random
 import discord
-from utils import cat
-from discord import app_commands
 from discord.ext import commands
+from utils import Cat
 
-cat = cat()
+cat = Cat()
 greenStar = ':green_square:'
 blackStar = ':black_large_square:'
 
@@ -60,9 +58,11 @@ class pages(discord.ui.View):
     async def interaction_check(self, interaction: discord.Interaction, /) -> bool:
         if interaction.user.id != self.interaction.user.id:
             image = cat.image()
+
             embed = discord.Embed(title='Error', description='You can\'t use this button because you didn\'t start the command. Try running </breeds:1> and selecting "list".', color=discord.Colour.red())
             embed.set_image(url=image)
             embed.set_footer(text='Made by @gifkitties', icon_url='https://cdn.discordapp.com/attachments/889397754458169385/985133240098627644/ezgif-3-df748915d9.gif')
+
             await interaction.response.send_message(embed=embed, ephemeral=True)
             return False
         else:
@@ -76,25 +76,21 @@ class breeds(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @app_commands.command(name='breeds', description='Sends info on a cat breed.')
-    @app_commands.describe(breed='Your breed of choice that you want to know more about.')
-    @app_commands.choices(type=[
-        app_commands.Choice(name='information', value='Information'),
-        app_commands.Choice(name='stats', value='Stats'),
-        app_commands.Choice(name='list', value='List')
+    @discord.app_commands.command(name='breeds', description='Sends info on a cat breed.')
+    @discord.app_commands.describe(breed='Your breed of choice that you want to know more about.')
+    @discord.app_commands.choices(type=[
+        discord.app_commands.Choice(name='information', value='Information'),
+        discord.app_commands.Choice(name='stats', value='Stats'),
+        discord.app_commands.Choice(name='list', value='List')
     ])
 
-    async def breeds(self, interaction: discord.Interaction, type: app_commands.Choice[str], breed: str = ''):
+    async def breeds(self, interaction: discord.Interaction, type: discord.app_commands.Choice[str], breed: str = ''):
         breeds = cat.get_breeds()
         breedIDs = [i['id'] for i in breeds]
 
-        if breed in breedIDs:
-            image = cat.image(breed)
-        else:
-            image = cat.image()
-
         if type.value == 'Information':
             if breed in breedIDs:
+                image = cat.image(breed=breed)
                 breedData = cat.get_breed_info(breed)
 
                 embed = discord.Embed(title=breedData['name'], description=breedData['description'], color=discord.Colour(cat.embedColor))
@@ -109,13 +105,17 @@ class breeds(commands.Cog):
                 await interaction.response.send_message(embed=embed)
 
             else:
+                image = cat.image()
+
                 embed = discord.Embed(title='Error', description="This breed doesn't exist.\nPlease check you entered the corresponding 4 letter code for your chosen breed by running </breeds:1> and selecting \"list\".",color=discord.Colour.red())
                 embed.set_image(url=image)
                 embed.set_footer(text='Made by @gifkitties', icon_url='https://cdn.discordapp.com/attachments/889397754458169385/985133240098627644/ezgif-3-df748915d9.gif')
+
                 await interaction.response.send_message(embed=embed)
 
         elif type.value == 'Stats':
             if breed in breedIDs:
+                image = cat.image(breed=breed)
                 breedData = cat.get_breed_info(breed)
 
                 embed=discord.Embed(title=breedData['name'], color=discord.Colour(cat.embedColor))
@@ -135,9 +135,12 @@ class breeds(commands.Cog):
 
                 await interaction.response.send_message(embed=embed)
             else:
+                image = cat.image()
+
                 embed = discord.Embed(title='Error', description='This breed doesn\'t exist.\nPlease check you entered the corresponding 4 letter code for your chosen breed by running </breeds:1> and selecting "list".', color=discord.Colour.red())
                 embed.set_image(url=image)
                 embed.set_footer(text='Made by @gifkitties', icon_url='https://cdn.discordapp.com/attachments/889397754458169385/985133240098627644/ezgif-3-df748915d9.gif')
+
                 await interaction.response.send_message(embed=embed)
 
         elif type.value == 'List':

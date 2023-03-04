@@ -6,7 +6,7 @@ import os
 import discord
 from discord_webhook import DiscordWebhook, DiscordEmbed
 from discord.ext import tasks, commands
-from utils import cat, logger
+from utils import Cat, logger
 
 # <-- Classes -->
 class Bot(commands.Bot):
@@ -81,7 +81,7 @@ async def scrape():
 
     webhooks = data['webhooks']
     image = cat.image()
-    
+
     for i in webhooks:
         webhook = DiscordWebhook(url=webhooks[i], username='Cat Bot', avatar_url='https://cdn.discordapp.com/avatars/977774728540459008/99b98aa4a7368955a41fe7796cc876de.webp?size=512')
 
@@ -98,7 +98,7 @@ async def scrape():
 
 # <-- Variables -->
 bot = Bot()
-cat = cat()
+cat = Cat()
 log = logger()
 token = ''
 headers = {
@@ -108,5 +108,15 @@ headers = {
     'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:12.0) Gecko/20100101 Firefox/12.0'
 }
 
-# <-- Main -->
+# Make the bot run exactly on the hour
+# This is to ensure that the hourly cat photo
+# is sent at the same time every hour
+# print('Waiting for the next hour...')
+
+# previousHour = datetime.now()
+# while True:
+#     currentHour = datetime.now()
+#     if currentHour.hour != previousHour.hour:
+#         break
+
 bot.run(token)

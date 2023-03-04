@@ -1,15 +1,14 @@
 import discord
-from utils import cat
-from discord import app_commands
 from discord.ext import commands
+from utils import Cat
 
-cat = cat()
+cat = Cat()
 
 class help(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @app_commands.command(name = 'help', description = 'Sends a list of commands.')
+    @discord.app_commands.command(name = 'help', description = 'Sends a list of commands.')
 
     async def help(self, interaction: discord.Interaction):
         image = cat.image()
@@ -23,9 +22,9 @@ class help(commands.Cog):
         embed.add_field(name='Breeds', value='Provides information or statistics about a specific cat breed, or lists all supported cat breeds for the bot.', inline=False)
         embed.add_field(name='Schedule', value='The bot will send a message hourly with a random cat photo once provided with a Discord Webhook.', inline=False)
         embed.add_field(name='Help', value='Sends a list of commands.', inline=False)
-
         embed.set_image(url=image)
         embed.set_footer(text='Made by @gifkitties', icon_url='https://cdn.discordapp.com/attachments/889397754458169385/985133240098627644/ezgif-3-df748915d9.gif')
+
         await interaction.response.send_message(embed=embed)
 
 async def setup(bot: commands.Bot):
