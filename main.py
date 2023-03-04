@@ -112,7 +112,7 @@ headers = {
 # Make the bot run exactly on the hour
 # This is to ensure that the hourly cat photo
 # is sent at the same time every hour
-print('Waiting for the next hour...')
+log.warning('Waiting for the next hour to start.')
 previousHour = datetime.now()
 
 while True:
