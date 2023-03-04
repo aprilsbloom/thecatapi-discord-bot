@@ -4,6 +4,7 @@ import asyncio
 import json
 import os
 import discord
+from datetime import datetime
 from discord_webhook import DiscordWebhook, DiscordEmbed
 from discord.ext import tasks, commands
 from utils import Cat, logger
@@ -113,10 +114,10 @@ headers = {
 # is sent at the same time every hour
 # print('Waiting for the next hour...')
 
-# previousHour = datetime.now()
-# while True:
-#     currentHour = datetime.now()
-#     if currentHour.hour != previousHour.hour:
-#         break
+previousHour = datetime.now()
+while True:
+    currentHour = datetime.now()
+    if currentHour.hour != previousHour.hour:
+        break
 
 bot.run(token)
