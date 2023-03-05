@@ -20,14 +20,8 @@ class video(commands.Cog):
             with open('data.json', 'r', encoding='utf8') as f:
                 data = random.choice(json.load(f)['videos'])
 
-            title = data['title']
-            author = data['author']
-            subreddit = data['subreddit']
-            video = data['video']
-            postLink = data['permalink']
-
             # I'm utilizing a bug with spoilers to hide the video link in the message
-            await interaction.response.send_message(f'**{title}**\nPosted by u/{author} in r/{subreddit}\n\n<{postLink}> {spoilerText} {video}')
+            await interaction.response.send_message(f'**{data["title"]}**\nPosted by u/{data["author"]} in r/{data["subreddit"]}\n\n<{data["permalink"]}> {spoilerText} {data["video"]}')
 
         except KeyError:
             image = cat.image()
