@@ -32,16 +32,19 @@ You can then run `main.py` to launch the bot.
   - Information
     - Using the Breed ID `acur` to fetch information about the American Curl provides us with the following information
 
+    <!-- markdownlint-disable-next-line no-inline-html -->
     <img style="width: 25%;" src="https://user-images.githubusercontent.com/90877067/209638911-d472e143-e587-4204-ab6f-9868d5757426.png">
 
   - Statistics
     - Using the Breed ID `acur` to fetch statistics about the American Curl provides us with the following information
 
+    <!-- markdownlint-disable-next-line no-inline-html -->
     <img style="width: 25%;" src="https://user-images.githubusercontent.com/90877067/209639566-cb087fc9-1139-4444-88fb-3ad9caf4a983.png">
 
   - List
     - Running this command with the `List` argument shows us a list of 4 letter codes we can use with the bot.
 
+    <!-- markdownlint-disable-next-line no-inline-html -->
     <img style="width: 25%;" src="https://user-images.githubusercontent.com/90877067/209639799-ff3489e7-0e84-4bdd-b790-8044894380e9.png">
 
 - Schedule
