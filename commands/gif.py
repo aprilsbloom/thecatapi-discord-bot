@@ -2,8 +2,10 @@ import discord
 from discord.ext import commands
 from utils import Cat
 
+# Variables
 cat = Cat()
 
+# Command
 class gif(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
@@ -19,5 +21,6 @@ class gif(commands.Cog):
 
         await interaction.response.send_message(embed=embed)
 
+# Cog setup
 async def setup(bot: commands.Bot):
     await bot.add_cog(gif(bot))

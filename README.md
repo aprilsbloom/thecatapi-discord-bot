@@ -26,7 +26,7 @@ You can then run `main.py` to launch the bot.
     -   This command fetches a random fact about cats. I used [my own collection of cat facts](https://gist.githubusercontent.com/paintingofblue/657d0c4d1202374889ce4a98a6b7f35f/raw/catfacts.txt) for this command.
 
 -   Video
-    -   This command fetches a random video from a [list of subreddits](https://github.com/paintingofblue/thecatapi-discord-bot/blob/main/API.py#L7). It shows the information about the post, such as the title, who posted it, the subreddit it was posted in and the post link.
+    -   This command fetches a random video from a [list of subreddits](https://github.com/paintingofblue/thecatapi-discord-bot/blob/main/utils.py#L10). It shows the information about the post, such as the title, who posted it, the subreddit it was posted in and the post link.
 
 -   Breeds
     -   This command has 2 different arguments. It can be used to show a description of your chosen breed, to show statistics about your breed, as well as list all supported breeds by the bot.

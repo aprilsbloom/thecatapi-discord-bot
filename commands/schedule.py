@@ -3,8 +3,10 @@ import json
 from discord.ext import commands
 from utils import Cat
 
+# Variables
 cat = Cat()
 
+# Command
 class schedule(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
@@ -62,6 +64,7 @@ class schedule(commands.Cog):
         else:
             await handleResponse(interaction, 'Error', 'You need to be an administrator to use this command.')
 
+# Function to handle responses so my code doesn't look unnecessarily bloated
 async def handleResponse(interaction, type, text):
     image = cat.image()
     embed = discord.Embed(title=type, description=text)
@@ -75,5 +78,6 @@ async def handleResponse(interaction, type, text):
     embed.set_footer(text='Made by @gifkitties', icon_url='https://cdn.discordapp.com/attachments/889397754458169385/985133240098627644/ezgif-3-df748915d9.gif')
     await interaction.response.send_message(embed=embed, ephemeral=True)
 
+# Cog setup
 async def setup(bot: commands.Bot):
     await bot.add_cog(schedule(bot))

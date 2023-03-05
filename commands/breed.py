@@ -2,11 +2,12 @@ import discord
 from discord.ext import commands
 from utils import Cat
 
+# Variables
 cat = Cat()
 greenStar = ':green_square:'
 blackStar = ':black_large_square:'
 
-# <-- Buttons -->
+# Buttons
 class pages(discord.ui.View):
     def __init__(self, interaction: discord.Interaction, pages: list):
         super().__init__(timeout=None)
@@ -73,7 +74,7 @@ class pages(discord.ui.View):
         for i in self.children:
             i.disabled = True
 
-# <-- Command -->
+# Command
 class breeds(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
@@ -162,5 +163,6 @@ class breeds(commands.Cog):
             embeds[0].set_image(url=cat.image())
             await interaction.response.send_message(embed=embeds[0], view=pages(interaction, embeds))
 
+# Cog setup
 async def setup(bot: commands.Bot):
     await bot.add_cog(breeds(bot))

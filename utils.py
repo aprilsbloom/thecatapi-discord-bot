@@ -3,7 +3,7 @@ import json
 import random
 from datetime import datetime
 
-# API wrapper for thecatapi.com
+# API wrapper for https://thecatapi.com
 class Cat():
     def __init__(self):
         self.embedColor = 0x3498DB
