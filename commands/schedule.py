@@ -25,15 +25,15 @@ class schedule(commands.Cog):
                         data = json.load(f)
 
                     if webhook not in data['webhooks'].values():
-                        handleResponse(interaction, 'Success', 'Your webhook was added to the schedule.')
+                        await handleResponse(interaction, 'Success', 'Your webhook was added to the schedule.')
 
                         data['webhooks'][str(interaction.guild.id)] = webhook
                         with open('data.json', 'w', encoding='utf8') as f:
                             f.write(json.dumps(data))
                     else:
-                        handleResponse(interaction, 'Error', 'This webhook is already registered.')
+                        await handleResponse(interaction, 'Error', 'This webhook is already registered.')
                 else:
-                    handleResponse(interaction, 'Error', 'You need to provide a valid webhook url.')
+                    await handleResponse(interaction, 'Error', 'You need to provide a valid webhook url.')
 
             elif type.value == 'Remove':
                 if webhook.startswith('https://discord.com/api/webhooks/'):
@@ -41,26 +41,26 @@ class schedule(commands.Cog):
                         data = json.load(f)
 
                     if data['webhooks'][str(interaction.guild.id)] == webhook:
-                        handleResponse(interaction, 'Success', 'Your webhook was removed from the schedule.')
+                        await handleResponse(interaction, 'Success', 'Your webhook was removed from the schedule.')
 
                         data['webhooks'].pop(str(interaction.guild.id))
                         with open('data.json', 'w', encoding='utf8') as f:
                             f.write(json.dumps(data))
                     else:
-                        handleResponse(interaction, 'Error', 'This webhook is not registered for this server.')
+                        await handleResponse(interaction, 'Error', 'This webhook is not registered for this server.')
                 else:
-                    handleResponse(interaction, 'Error', 'You need to provide a valid webhook url.')
+                    await handleResponse(interaction, 'Error', 'You need to provide a valid webhook url.')
 
             elif type.value == 'View':
                 with open('data.json', 'r', encoding='utf8') as f:
                     data = json.load(f)
 
                 if str(interaction.guild.id) in data['webhooks'].keys():
-                    handleResponse(interaction, 'Success', f'Your webhook is: `{data["webhooks"][str(interaction.guild.id)]}`.')
+                    await handleResponse(interaction, 'Success', f'Your webhook is: `{data["webhooks"][str(interaction.guild.id)]}`.')
                 else:
-                    handleResponse(interaction, 'Error', 'No webhooks for this server were found.')
+                    await handleResponse(interaction, 'Error', 'No webhooks for this server were found.')
         else:
-            handleResponse(interaction, 'Error', 'You need to be an administrator to use this command.')
+            await handleResponse(interaction, 'Error', 'You need to be an administrator to use this command.')
 
 async def handleResponse(interaction, type, text):
     image = cat.image()

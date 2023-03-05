@@ -58,6 +58,7 @@ async def scrape():
                 if not obj['is_video']:
                     continue
 
+                # Parse only the data that I need, and add it to the videos array in data.json
                 data['videos'].append({
                     'title': obj['title'].encode().decode('utf8'),
                     'author': obj['author'],

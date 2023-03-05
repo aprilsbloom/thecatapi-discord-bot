@@ -24,13 +24,13 @@ class image(commands.Cog):
                 image = cat.image(breed=breed)
                 breedname = cat.get_breed_info(breed)['name']
 
-                embed = discord.Embed(title='Here\'s a cat image:', description = f'Breed: {breedname}', color=discord.Colour(cat.embedColor))
+                embed = discord.Embed(title="Here's a cat image:", description = f'Breed: {breedname}', color=discord.Colour(cat.embedColor))
                 embed.set_image(url=image)
                 embed.set_footer(text='Made by @gifkitties', icon_url='https://cdn.discordapp.com/attachments/889397754458169385/985133240098627644/ezgif-3-df748915d9.gif')
             else:
                 image = cat.image()
 
-                embed = discord.Embed(title='Error', description = 'This breed doesn\'t exist. Please check your spelling and try again.', color=discord.Colour.red())
+                embed = discord.Embed(title='Error', description = "This breed doesn't exist. Please check your spelling and try again.", color=discord.Colour.red())
                 embed.set_image(url=image)
                 embed.set_footer(text='Made by @gifkitties', icon_url='https://cdn.discordapp.com/attachments/889397754458169385/985133240098627644/ezgif-3-df748915d9.gif')
 

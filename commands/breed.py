@@ -6,6 +6,7 @@ cat = Cat()
 greenStar = ':green_square:'
 blackStar = ':black_large_square:'
 
+# <-- Buttons -->
 class pages(discord.ui.View):
     def __init__(self, interaction: discord.Interaction, pages: list):
         super().__init__(timeout=None)
@@ -59,7 +60,7 @@ class pages(discord.ui.View):
         if interaction.user.id != self.interaction.user.id:
             image = cat.image()
 
-            embed = discord.Embed(title='Error', description='You can\'t use this button because you didn\'t start the command. Try running </breeds:1> and selecting "list".', color=discord.Colour.red())
+            embed = discord.Embed(title='Error', description="You can't use this button because you didn\'t start the command. Try running </breeds:1> and selecting \"list\".", color=discord.Colour.red())
             embed.set_image(url=image)
             embed.set_footer(text='Made by @gifkitties', icon_url='https://cdn.discordapp.com/attachments/889397754458169385/985133240098627644/ezgif-3-df748915d9.gif')
 
@@ -72,6 +73,7 @@ class pages(discord.ui.View):
         for i in self.children:
             i.disabled = True
 
+# <-- Command -->
 class breeds(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
