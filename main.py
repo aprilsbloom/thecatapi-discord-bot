@@ -59,13 +59,15 @@ async def scrape():
                     continue
 
                 # Parse only the data that I need, and add it to the videos array in data.json
-                data['videos'].append({
-                    'title': obj['title'].encode().decode('utf8'),
-                    'author': obj['author'],
-                    'subreddit': obj['subreddit'],
-                    'permalink': f'https://www.reddit.com{obj["permalink"]}',
-                    'video': obj['secure_media']['reddit_video']['fallback_url'].split('?')[0],
-                })
+                data['videos'].append(
+                    {
+                        'title': obj['title'].encode().decode('utf8'),
+                        'author': obj['author'],
+                        'subreddit': obj['subreddit'],
+                        'permalink': f'https://www.reddit.com{obj["permalink"]}',
+                        'video': obj['secure_media']['reddit_video']['fallback_url'].split('?')[0]
+                    }
+                )
 
         except KeyError:
             logger.error(f"Error scraping videos from {i['data']['children'][0]['data']['subreddit']}.")
@@ -107,7 +109,7 @@ headers = {
     'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
     'Accept-Encoding': 'gzip, deflate, br',
     'Accept-Language': 'en-US,en;q=0.5',
-    'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:12.0) Gecko/20100101 Firefox/12.0'
+    'User-Agent': 'Cat Bot - https://github.com/paintingofblue/thecatapi-discord-bot'
 }
 
 # Make the bot run exactly on the hour

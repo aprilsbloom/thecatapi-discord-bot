@@ -16,7 +16,7 @@ class image(commands.Cog):
         if not breed:
             image = cat.image()
 
-            embed = discord.Embed(title='Here\'s a cat image:', color=discord.Colour(cat.embedColor))
+            embed = discord.Embed(title="Here's a cat image:", color=discord.Colour(cat.embedColor))
             embed.set_image(url=image)
             embed.set_footer(text='Made by @gifkitties', icon_url='https://cdn.discordapp.com/attachments/889397754458169385/985133240098627644/ezgif-3-df748915d9.gif')
         else:

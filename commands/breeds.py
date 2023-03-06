@@ -61,7 +61,7 @@ class pages(discord.ui.View):
         if interaction.user.id != self.interaction.user.id:
             image = cat.image()
 
-            embed = discord.Embed(title='Error', description="You can't use this button because you didn\'t start the command. Try running </breeds:1> and selecting \"list\".", color=discord.Colour.red())
+            embed = discord.Embed(title='Error', description="You can't use this button because you didn't start the command. Try running </breeds:1> and selecting \"list\".", color=discord.Colour.red())
             embed.set_image(url=image)
             embed.set_footer(text='Made by @gifkitties', icon_url='https://cdn.discordapp.com/attachments/889397754458169385/985133240098627644/ezgif-3-df748915d9.gif')
 
@@ -140,7 +140,7 @@ class breeds(commands.Cog):
             else:
                 image = cat.image()
 
-                embed = discord.Embed(title='Error', description='This breed doesn\'t exist.\nPlease check you entered the corresponding 4 letter code for your chosen breed by running </breeds:1> and selecting "list".', color=discord.Colour.red())
+                embed = discord.Embed(title='Error', description="This breed doesn't exist.\nPlease check you entered the corresponding 4 letter code for your chosen breed by running </breeds:1> and selecting \"list\".", color=discord.Colour.red())
                 embed.set_image(url=image)
                 embed.set_footer(text='Made by @gifkitties', icon_url='https://cdn.discordapp.com/attachments/889397754458169385/985133240098627644/ezgif-3-df748915d9.gif')
 
