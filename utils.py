@@ -1,5 +1,4 @@
 import requests
-import json
 import random
 from datetime import datetime
 
@@ -19,27 +18,21 @@ class Cat():
 
             return r.json()[0]['url']
         else:
-            try:
-                r = requests.get('https://api.thecatapi.com/v1/images/search?mime_types=jpg,png', headers={'x-api-key': random.choice(self.keyList)})
+            r = requests.get('https://api.thecatapi.com/v1/images/search?mime_types=jpg,png', headers={'x-api-key': random.choice(self.keyList)})
 
-                return r.json()[0]['url']
-            except (json.decoder.JSONDecodeError, KeyError):    # If the API doesn't return valid JSON, return an image I've picked
-                return 'https://cdn.discordapp.com/attachments/967001823351304232/1080754805632409670/BOJ9__HCMAE7PhB.jpg'
+            return r.json()[0]['url']
 
     # Fetching gif
     def gif(self):
-        try:
-            if random.randint(1, 2) == 1:
-                r = requests.get('https://api.thecatapi.com/v1/images/search?mime_types=gif', headers={'x-api-key': random.choice(self.keyList)})
+        if random.randint(1, 2) == 1:
+            r = requests.get('https://api.thecatapi.com/v1/images/search?mime_types=gif', headers={'x-api-key': random.choice(self.keyList)})
 
-                return r.json()[0]['url']
-            else:
-                r = requests.get('https://edgecats.net/all')
-                gifLinks = [i.split('href="')[1].split('"')[0] for i in r.text.splitlines() if 'href="' in i]
+            return r.json()[0]['url']
+        else:
+            r = requests.get('https://edgecats.net/all')
+            gifLinks = [i.split('href="')[1].split('"')[0] for i in r.text.splitlines() if 'href="' in i]
 
-                return random.choice(gifLinks)
-        except (json.decoder.JSONDecodeError, KeyError):    # If the API doesn't return valid JSON, return a gif I've picked
-            return 'https://cdn.discordapp.com/attachments/889397754458169385/985133240098627644/ezgif-3-df748915d9.gif'
+            return random.choice(gifLinks)
 
     # Fetching fact
     def fact(self):
@@ -58,24 +51,26 @@ class Cat():
 
 # Logger
 class logger:
-    def __init__(self):         # Initialize colors using ANSI escape codes
+    # Initialize colors using ANSI escape codes
+    def __init__(self):
         self.red = '\033[91m'
         self.yellow = '\033[93m'
         self.green = '\033[92m'
-        self.reset = '\033[0m'
+        self.grey = '\033[90m'
+        self.reset = '\033[37m'
 
     def info(self, text):
-        time = datetime.now().strftime('%H:%M:%S')
-        print(f'[+] {time} - {text}')
+        time = datetime.now().strftime("%D %H:%M:%S")
+        print(f'{self.grey}[+]{self.reset} {time} - {text}')
 
     def error(self, text):
-        time = datetime.now().strftime('%H:%M:%S')
+        time = datetime.now().strftime("%D %H:%M:%S")
         print(f'{self.red}[-]{self.reset} {time} - {text}')
 
     def warning(self, text):
-        time = datetime.now().strftime('%H:%M:%S')
+        time = datetime.now().strftime("%D %H:%M:%S")
         print(f'{self.yellow}[!]{self.reset} {time} - {text}')
 
     def success(self, text):
-        time = datetime.now().strftime('%H:%M:%S')
+        time = datetime.now().strftime("%D %H:%M:%S")
         print(f'{self.green}[+]{self.reset} {time} - {text}')

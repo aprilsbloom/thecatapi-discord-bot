@@ -29,7 +29,8 @@ class Bot(commands.Bot):
 # <-- Tasks -->
 @tasks.loop(minutes=1)
 async def rpc():
-    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=f"/help in {len(bot.guilds)} servers"))
+    activity = discord.Activity(type=discord.ActivityType.listening, name=f"/help in {len(bot.guilds)} servers")
+    await bot.change_presence(activity=activity)
 
 @tasks.loop(hours=1)
 async def scrape():
@@ -96,7 +97,7 @@ async def scrape():
         webhook.add_embed(embed)
         webhook.execute()
 
-        await asyncio.sleep(2)
+        await asyncio.sleep(2.5)
 
     log.success('Finished sending photos to webhooks!')
 

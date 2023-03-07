@@ -16,19 +16,12 @@ class video(commands.Cog):
     @discord.app_commands.command(name = 'video', description = 'Sends a cat video.')
 
     async def video(self, interaction: discord.Interaction):
-        try:
-            with open('data.json', 'r', encoding='utf8') as f:
-                data = random.choice(json.load(f)['videos'])
+        with open('data.json', 'r', encoding='utf8') as f:
+            data = json.load(f)['videos']
+            video = data[random.randint(0, len(data) - 1)]
 
-            # I'm utilizing a bug with spoilers to hide the video link in the message
-            await interaction.response.send_message(f'**{data["title"]}**\nPosted by u/{data["author"]} in r/{data["subreddit"]}\n\n<{data["permalink"]}> {spoilerText} {data["video"]}')
-
-        except KeyError:
-            image = cat.image()
-            embed = discord.Embed(title='Error', description='Unable to fetch a video —— Please try again later.', color=discord.Colour.red())
-            embed.set_image(url=image)
-            embed.set_footer(text='Made by @gifkitties', icon_url='https://cdn.discordapp.com/attachments/889397754458169385/985133240098627644/ezgif-3-df748915d9.gif')
-            await interaction.response.send_message(embed=embed)
+        # I'm utilizing a bug with spoilers here to hide the video link at the end of the message
+        await interaction.response.send_message(f'**{video["title"]}**\nPosted by u/{video["author"]} in r/{video["subreddit"]}\n\n<{video["permalink"]}> {spoilerText} {video["video"]}')
 
 # Cog setup
 async def setup(bot: commands.Bot):

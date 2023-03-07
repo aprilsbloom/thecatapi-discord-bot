@@ -20,49 +20,60 @@ class schedule(commands.Cog):
     ])
 
     async def schedule(self, interaction: discord.Interaction, type: discord.app_commands.Choice[str], webhook: str = ''):
+        webhook = webhook.strip()
+
         if interaction.user.guild_permissions.administrator:
             if type.value == 'Add':
-                if webhook.startswith('https://discord.com/api/webhooks/'):
-                    with open('data.json', 'r', encoding='utf8') as f:
-                        data = json.load(f)
-
-                    if webhook not in data['webhooks'].values():
-                        await handleResponse(interaction, 'Success', 'Your webhook was added to the schedule.')
-
-                        data['webhooks'][str(interaction.guild.id)] = webhook
-                        with open('data.json', 'w', encoding='utf8') as f:
-                            f.write(json.dumps(data))
-                    else:
-                        await handleResponse(interaction, 'Error', 'This webhook is already registered.')
-                else:
-                    await handleResponse(interaction, 'Error', 'You need to provide a valid webhook url.')
+                await addWebhook(interaction, webhook)
 
             elif type.value == 'Remove':
-                if webhook.startswith('https://discord.com/api/webhooks/'):
-                    with open('data.json', 'r', encoding='utf8') as f:
-                        data = json.load(f)
-
-                    if data['webhooks'][str(interaction.guild.id)] == webhook:
-                        await handleResponse(interaction, 'Success', 'Your webhook was removed from the schedule.')
-                        data['webhooks'].pop(str(interaction.guild.id))
-
-                        with open('data.json', 'w', encoding='utf8') as f:
-                            f.write(json.dumps(data))
-                    else:
-                        await handleResponse(interaction, 'Error', 'This webhook is not registered for this server.')
-                else:
-                    await handleResponse(interaction, 'Error', 'You need to provide a valid webhook url.')
+               await removeWebhook(interaction, webhook)
 
             elif type.value == 'View':
-                with open('data.json', 'r', encoding='utf8') as f:
-                    data = json.load(f)
-
-                if str(interaction.guild.id) in data['webhooks'].keys():
-                    await handleResponse(interaction, 'Success', f'Your webhook is: `{data["webhooks"][str(interaction.guild.id)]}`.')
-                else:
-                    await handleResponse(interaction, 'Error', 'No webhooks for this server were found.')
+                await viewWebhook(interaction)
         else:
             await handleResponse(interaction, 'Error', 'You need to be an administrator to use this command.')
+
+async def addWebhook(interaction: discord.Interaction, webhook: str):
+    if webhook.startswith('https://discord.com/api/webhooks/'):
+        with open('data.json', 'r', encoding='utf8') as f:
+            data = json.load(f)
+
+        if webhook not in data['webhooks'].values():
+            await handleResponse(interaction, 'Success', 'Your webhook was added to the schedule.')
+
+            data['webhooks'][str(interaction.guild.id)] = webhook
+            with open('data.json', 'w', encoding='utf8') as f:
+                f.write(json.dumps(data))
+        else:
+            await handleResponse(interaction, 'Error', 'This webhook is already registered.')
+    else:
+        await handleResponse(interaction, 'Error', 'You need to provide a valid webhook url.')
+
+async def removeWebhook(interaction: discord.Interaction, webhook: str):
+    if webhook.startswith('https://discord.com/api/webhooks/'):
+        with open('data.json', 'r', encoding='utf8') as f:
+            data = json.load(f)
+
+        if data['webhooks'][str(interaction.guild.id)] == webhook:
+            await handleResponse(interaction, 'Success', 'Your webhook was removed from the schedule.')
+            data['webhooks'].pop(str(interaction.guild.id))
+
+            with open('data.json', 'w', encoding='utf8') as f:
+                f.write(json.dumps(data))
+        else:
+            await handleResponse(interaction, 'Error', 'This webhook is not registered for this server.')
+    else:
+        await handleResponse(interaction, 'Error', 'You need to provide a valid webhook url.')
+
+async def viewWebhook(interaction: discord.Interaction):
+    with open('data.json', 'r', encoding='utf8') as f:
+        data = json.load(f)
+
+    if str(interaction.guild.id) in data['webhooks'].keys():
+        await handleResponse(interaction, 'Success', f'Your webhook is:\n\n{data["webhooks"][str(interaction.guild.id)]}')
+    else:
+        await handleResponse(interaction, 'Error', 'No webhooks for this server were found.')
 
 # Function to handle responses so my code doesn't look unnecessarily bloated
 async def handleResponse(interaction, type, text):

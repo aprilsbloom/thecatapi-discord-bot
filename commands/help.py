@@ -16,7 +16,6 @@ class help(commands.Cog):
         image = cat.image()
 
         embed=discord.Embed(title='Help', description='These are the commands that Cat Bot currently supports.', color=discord.Colour(cat.embedColor))
-
         embed.add_field(name='Gif', value='Sends a cat gif.', inline=False)
         embed.add_field(name='Image', value='Sends a cat image.\nInputting a breed ID will allow you to recieve images of a specific cat breed.', inline=False)
         embed.add_field(name='Fact', value='Sends a fact about cats.', inline=False)
