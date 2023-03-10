@@ -84,11 +84,10 @@ async def scrape():
     with open('data.json', 'r', encoding='utf8') as f:
         data = json.load(f)
 
-    webhooks = data['webhooks']
     image = cat.image()
 
-    for i in webhooks:
-        webhook = DiscordWebhook(url=webhooks[i], username='Cat Bot', avatar_url='https://cdn.discordapp.com/avatars/977774728540459008/99b98aa4a7368955a41fe7796cc876de.webp?size=512')
+    for i in data['webhooks']:
+        webhook = DiscordWebhook(url=data['webhooks'][i], username='Cat Bot', avatar_url='https://cdn.discordapp.com/avatars/977774728540459008/99b98aa4a7368955a41fe7796cc876de.webp?size=512')
 
         embed = DiscordEmbed(title='Hourly Cat Photo', color=cat.embedColor)
         embed.set_image(url=image)
