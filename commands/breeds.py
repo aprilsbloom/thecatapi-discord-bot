@@ -11,8 +11,8 @@ blackStar = ':black_large_square:'
 class pages(discord.ui.View):
     def __init__(self, interaction: discord.Interaction, pages: list):
         super().__init__(timeout=None)
-        self.interaction = interaction
         self.pages = pages
+        self.interaction = interaction
         self.current_page = 0
 
     @discord.ui.button(label='Previous', style=discord.ButtonStyle.grey, disabled=True)
@@ -63,16 +63,11 @@ class pages(discord.ui.View):
 
             embed = discord.Embed(title='Error', description="You can't use this button because you didn't start the command. Try running </breeds:1> and selecting \"list\".", color=discord.Colour.red())
             embed.set_image(url=image)
-            embed.set_footer(text='Made by @gifkitties', icon_url='https://cdn.discordapp.com/attachments/889397754458169385/985133240098627644/ezgif-3-df748915d9.gif')
 
             await interaction.response.send_message(embed=embed, ephemeral=True)
             return False
         else:
             return True
-
-    async def on_timeout(self):
-        for i in self.children:
-            i.disabled = True
 
 # Command
 class breeds(commands.Cog):
@@ -112,7 +107,6 @@ class breeds(commands.Cog):
 
                 embed = discord.Embed(title='Error', description="This breed doesn't exist.\nPlease check you entered the corresponding 4 letter code for your chosen breed by running </breeds:1> and selecting \"list\".",color=discord.Colour.red())
                 embed.set_image(url=image)
-                embed.set_footer(text='Made by @gifkitties', icon_url='https://cdn.discordapp.com/attachments/889397754458169385/985133240098627644/ezgif-3-df748915d9.gif')
 
                 await interaction.response.send_message(embed=embed)
 
@@ -142,7 +136,7 @@ class breeds(commands.Cog):
 
                 embed = discord.Embed(title='Error', description="This breed doesn't exist.\nPlease check you entered the corresponding 4 letter code for your chosen breed by running </breeds:1> and selecting \"list\".", color=discord.Colour.red())
                 embed.set_image(url=image)
-                embed.set_footer(text='Made by @gifkitties', icon_url='https://cdn.discordapp.com/attachments/889397754458169385/985133240098627644/ezgif-3-df748915d9.gif')
+
 
                 await interaction.response.send_message(embed=embed)
 
@@ -157,7 +151,7 @@ class breeds(commands.Cog):
                 for breed in breeds[i:i+10]:
                     embed.add_field(name=breed['name'], value=breed['id'], inline=True)
 
-                embed.set_footer(text=f'Page {count} of {len(breeds) // 10 + 1} - Made by @gifkitties', icon_url='https://cdn.discordapp.com/attachments/889397754458169385/985133240098627644/ezgif-3-df748915d9.gif')
+                embed.set_footer(text=f'Page {count} of {len(breeds) // 10 + 1}')
                 embeds.append(embed)
 
             embeds[0].set_image(url=cat.image())

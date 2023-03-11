@@ -86,7 +86,6 @@ async def handleResponse(interaction, type, text):
         embed.color = discord.Colour.red()
 
     embed.set_image(url=image)
-    embed.set_footer(text='Made by @gifkitties', icon_url='https://cdn.discordapp.com/attachments/889397754458169385/985133240098627644/ezgif-3-df748915d9.gif')
     await interaction.response.send_message(embed=embed, ephemeral=True)
 
 # Cog setup

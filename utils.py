@@ -30,6 +30,7 @@ class Cat():
             return r.json()[0]['url']
         else:
             r = requests.get('https://edgecats.net/all')
+
             gifLinks = [i.split('href="')[1].split('"')[0] for i in r.text.splitlines() if 'href="' in i]
 
             return random.choice(gifLinks)
