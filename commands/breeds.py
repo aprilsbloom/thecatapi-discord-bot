@@ -70,6 +70,50 @@ class pages(discord.ui.View):
             return True
 
 # Command
+async def getBreedInfo(interaction, breed):
+    image = cat.image(breed=breed)
+    breedData = cat.get_breed_info(breed)
+
+    embed = discord.Embed(title=breedData['name'], description=breedData['description'], color=discord.Colour(cat.embedColor))
+    embed.add_field(name='Stats', value=f'''
+**Weight**\n{breedData['weight']['imperial']} lbs / {breedData['weight']['metric']} kg\n
+**Temperament**\n{breedData['temperament']}\n
+**Origin**\n{breedData['origin']}\n
+**Life Span**\n{breedData['life_span']} years\n
+**Wikipedia URL**\n{breedData['wikipedia_url']}\n''', inline=True)
+    embed.set_image(url=image)
+
+    await interaction.response.send_message(embed=embed)
+
+async def getBreedStats(interaction, breed):
+    image = cat.image(breed=breed)
+    breedData = cat.get_breed_info(breed)
+
+    embed=discord.Embed(title=breedData['name'], color=discord.Colour(cat.embedColor))
+    embed.add_field(name='Adaptability', value=f'{greenStar * breedData["adaptability"]}{blackStar * (5 - breedData["adaptability"])}', inline=True)
+    embed.add_field(name='Affection Level', value=f'{greenStar * breedData["affection_level"]}{blackStar * (5 - breedData["affection_level"])}', inline=True)
+    embed.add_field(name='Child Friendly', value=f'{greenStar * breedData["child_friendly"]}{blackStar * (5 - breedData["child_friendly"])}', inline=True)
+    embed.add_field(name='Dog Friendly', value=f'{greenStar * breedData["dog_friendly"]}{blackStar * (5 - breedData["dog_friendly"])}', inline=True)
+    embed.add_field(name='Energy Level', value=f'{greenStar * breedData["energy_level"]}{blackStar * (5 - breedData["energy_level"])}', inline=True)
+    embed.add_field(name='Grooming', value=f'{greenStar * breedData["grooming"]}{blackStar * (5 - breedData["grooming"])}', inline=True)
+    embed.add_field(name='Health Issues', value=f'{greenStar * breedData["health_issues"]}{blackStar * (5 - breedData["health_issues"])}', inline=True)
+    embed.add_field(name='Intelligence', value=f'{greenStar * breedData["intelligence"]}{blackStar * (5 - breedData["intelligence"])}', inline=True)
+    embed.add_field(name='Shedding Level', value=f'{greenStar * breedData["shedding_level"]}{blackStar * (5 - breedData["shedding_level"])}', inline=True)
+    embed.add_field(name='Social Needs', value=f'{greenStar * breedData["social_needs"]}{blackStar * (5 - breedData["social_needs"])}', inline=True)
+    embed.add_field(name='Stranger Friendly', value=f'{greenStar * breedData["stranger_friendly"]}{blackStar * (5 - breedData["stranger_friendly"])}', inline=True)
+    embed.add_field(name='Vocalisation', value=f'{greenStar * breedData["vocalisation"]}{blackStar * (5 - breedData["vocalisation"])}', inline=True)
+    embed.set_image(url=image)
+
+    await interaction.response.send_message(embed=embed)
+
+async def handleError(interaction):
+    image = cat.image()
+
+    embed = discord.Embed(title='Error', description="This breed doesn't exist.\nPlease check you entered the corresponding 4 letter code for your chosen breed by running </breeds:1> and selecting \"list\".",color=discord.Colour.red())
+    embed.set_image(url=image)
+
+    await interaction.response.send_message(embed=embed)
+
 class breeds(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
@@ -88,57 +132,15 @@ class breeds(commands.Cog):
 
         if type.value == 'Information':
             if breed in breedIDs:
-                image = cat.image(breed=breed)
-                breedData = cat.get_breed_info(breed)
-
-                embed = discord.Embed(title=breedData['name'], description=breedData['description'], color=discord.Colour(cat.embedColor))
-                embed.add_field(name='Stats', value=f'''
-**Weight**\n{breedData['weight']['imperial']} lbs / {breedData['weight']['metric']} kg\n
-**Temperament**\n{breedData['temperament']}\n
-**Origin**\n{breedData['origin']}\n
-**Life Span**\n{breedData['life_span']} years\n
-**Wikipedia URL**\n{breedData['wikipedia_url']}\n''', inline=True)
-                embed.set_image(url=image)
-
-                await interaction.response.send_message(embed=embed)
-
+                await getBreedInfo(interaction, breed)
             else:
-                image = cat.image()
-
-                embed = discord.Embed(title='Error', description="This breed doesn't exist.\nPlease check you entered the corresponding 4 letter code for your chosen breed by running </breeds:1> and selecting \"list\".",color=discord.Colour.red())
-                embed.set_image(url=image)
-
-                await interaction.response.send_message(embed=embed)
+                await handleError(interaction)
 
         elif type.value == 'Stats':
             if breed in breedIDs:
-                image = cat.image(breed=breed)
-                breedData = cat.get_breed_info(breed)
-
-                embed=discord.Embed(title=breedData['name'], color=discord.Colour(cat.embedColor))
-                embed.add_field(name='Adaptability', value=f'{greenStar * breedData["adaptability"]}{blackStar * (5 - breedData["adaptability"])}', inline=True)
-                embed.add_field(name='Affection Level', value=f'{greenStar * breedData["affection_level"]}{blackStar * (5 - breedData["affection_level"])}', inline=True)
-                embed.add_field(name='Child Friendly', value=f'{greenStar * breedData["child_friendly"]}{blackStar * (5 - breedData["child_friendly"])}', inline=True)
-                embed.add_field(name='Dog Friendly', value=f'{greenStar * breedData["dog_friendly"]}{blackStar * (5 - breedData["dog_friendly"])}', inline=True)
-                embed.add_field(name='Energy Level', value=f'{greenStar * breedData["energy_level"]}{blackStar * (5 - breedData["energy_level"])}', inline=True)
-                embed.add_field(name='Grooming', value=f'{greenStar * breedData["grooming"]}{blackStar * (5 - breedData["grooming"])}', inline=True)
-                embed.add_field(name='Health Issues', value=f'{greenStar * breedData["health_issues"]}{blackStar * (5 - breedData["health_issues"])}', inline=True)
-                embed.add_field(name='Intelligence', value=f'{greenStar * breedData["intelligence"]}{blackStar * (5 - breedData["intelligence"])}', inline=True)
-                embed.add_field(name='Shedding Level', value=f'{greenStar * breedData["shedding_level"]}{blackStar * (5 - breedData["shedding_level"])}', inline=True)
-                embed.add_field(name='Social Needs', value=f'{greenStar * breedData["social_needs"]}{blackStar * (5 - breedData["social_needs"])}', inline=True)
-                embed.add_field(name='Stranger Friendly', value=f'{greenStar * breedData["stranger_friendly"]}{blackStar * (5 - breedData["stranger_friendly"])}', inline=True)
-                embed.add_field(name='Vocalisation', value=f'{greenStar * breedData["vocalisation"]}{blackStar * (5 - breedData["vocalisation"])}', inline=True)
-                embed.set_image(url=image)
-
-                await interaction.response.send_message(embed=embed)
+                await getBreedStats(interaction, breed)
             else:
-                image = cat.image()
-
-                embed = discord.Embed(title='Error', description="This breed doesn't exist.\nPlease check you entered the corresponding 4 letter code for your chosen breed by running </breeds:1> and selecting \"list\".", color=discord.Colour.red())
-                embed.set_image(url=image)
-
-
-                await interaction.response.send_message(embed=embed)
+                await handleError(interaction)
 
         elif type.value == 'List':
             embeds = []

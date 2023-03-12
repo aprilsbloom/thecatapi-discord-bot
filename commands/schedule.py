@@ -56,11 +56,13 @@ async def removeWebhook(interaction: discord.Interaction, webhook: str):
             data = json.load(f)
 
         if data['webhooks'][str(interaction.guild.id)] == webhook:
-            await handleResponse(interaction, 'Success', 'Your webhook was removed from the schedule.')
             data['webhooks'].pop(str(interaction.guild.id))
 
             with open('data.json', 'w', encoding='utf8') as f:
                 f.write(json.dumps(data))
+
+            await handleResponse(interaction, 'Success', 'Your webhook was removed from the schedule.')
+
         else:
             await handleResponse(interaction, 'Error', 'This webhook is not registered for this server.')
     else:
