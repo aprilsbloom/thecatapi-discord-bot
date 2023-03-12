@@ -1,7 +1,7 @@
 <!-- markdownlint-disable no-inline-html list-marker-space ul-indent -->
 # The Cat API Discord bot
 
-Discord bot written in Python to utilize [TheCatAPI](https://thecatapi.com/) to fetch GIFs, images, and information about various breeds. I also utilize [Reddit's public subreddit endpoint](https://www.reddit.com/r/IllegallySmolCats.json?sort=hot&t=day&limit=100) to scrape videos. Unfortunately, links from that endpoint are without sound, but I will most likely add support for that in the future.
+Discord bot written in Python to utilize [TheCatAPI](https://thecatapi.com/) to fetch GIFs, images, and information about various breeds. I also utilize [Reddit's public subreddit endpoint](https://www.reddit.com/r/IllegallySmolCats.json?sort=hot&t=day&limit=100) to scrape videos. Unfortunately, links from that endpoint are without sound, and the current method I use to host the bot doesn't have enough resources to add sound using FFmpeg.
 
 ## Installation
 
@@ -26,7 +26,7 @@ You can then run `main.py` to launch the bot.
     -   This command fetches a random fact about cats. I used my own collection of cat facts for this command.
 
 -   Video
-    -   This command fetches a random video from a [list of subreddits](https://github.com/paintingofblue/thecatapi-discord-bot/blob/main/utils.py#L10). It shows the information about the post, such as the title, who posted it, the subreddit it was posted in and the post link.
+    -   This command fetches a random video from a list of subreddits. It shows the information about the post, such as the title, who posted it, the subreddit it was posted in and the video itself.
 
 -   Breeds
     -   This command has 2 different arguments. It can be used to show a description of your chosen breed, to show statistics about your breed, as well as list all supported breeds by the bot.
