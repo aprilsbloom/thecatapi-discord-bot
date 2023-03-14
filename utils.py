@@ -48,7 +48,7 @@ class Cat():
         return r.json()
 
 # Logger
-class logger:
+class Logger:
     # Initialize colors using ANSI escape codes
     def __init__(self):
         self.red = '\033[91m'

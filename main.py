@@ -6,9 +6,8 @@ import json
 import os
 import discord
 from datetime import datetime
-from discord_webhook import DiscordWebhook, DiscordEmbed
 from discord.ext import tasks, commands
-from utils import Cat, logger
+from utils import Cat, Logger
 
 # <-- Classes -->
 class Bot(commands.Bot):
@@ -73,7 +72,7 @@ async def scrapeVideos():
                 )
 
         except Exception:
-            logger.error(f"Error scraping videos from r/{cat.subList[i]}.")
+            log.error(f"Error scraping videos from r/{cat.subList[i]}.")
 
     with open('data.json', 'w', encoding='utf8') as f:
         f.write(json.dumps(data))
@@ -121,7 +120,7 @@ async def hourlyPhoto():
 # <-- Variables -->
 bot = Bot()
 cat = Cat()
-log = logger()
+log = Logger()
 headers = {
     'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
     'Accept-Encoding': 'gzip, deflate, br',
