@@ -15,6 +15,9 @@ class gif(commands.Cog):
     async def gif(self, interaction: discord.Interaction):
         gif = cat.gif()
 
+        if type(gif) == list:
+            gif = gif[0]['url']
+
         embed=discord.Embed(title="Here's a cat gif:", color=discord.Colour(cat.embedColor))
         embed.set_image(url=gif)
 

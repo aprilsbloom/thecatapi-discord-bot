@@ -79,7 +79,7 @@ async def viewWebhook(interaction: discord.Interaction):
 
 # Function to handle responses so my code doesn't look unnecessarily bloated
 async def handleResponse(interaction, type, text):
-    image = cat.image()
+    image = cat.image()[0]['url']
     embed = discord.Embed(title=type, description=text)
 
     if type == 'Success':

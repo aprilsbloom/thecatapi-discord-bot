@@ -14,7 +14,7 @@ class image(commands.Cog):
 
     async def image(self, interaction: discord.Interaction, breed: str = None):
         if not breed:
-            image = cat.image()
+            image = cat.image()[0]['url']
 
             embed = discord.Embed(title="Here's a cat image:", color=discord.Colour(cat.embedColor))
             embed.set_image(url=image)
@@ -22,13 +22,13 @@ class image(commands.Cog):
             breedIDs = [i['id'] for i in cat.get_breeds()]
 
             if breed in breedIDs:
-                image = cat.image(breed=breed)
+                image = cat.image(breed=breed)[0]['url']
                 breedname = cat.get_breed_info(breed)['name']
 
                 embed = discord.Embed(title="Here's a cat image:", description = f'Breed: {breedname}', color=discord.Colour(cat.embedColor))
                 embed.set_image(url=image)
             else:
-                image = cat.image()
+                image = cat.image()[0]['url']
 
                 embed = discord.Embed(title='Error', description = "This breed doesn't exist. Please check your spelling and try again.", color=discord.Colour.red())
                 embed.set_image(url=image)

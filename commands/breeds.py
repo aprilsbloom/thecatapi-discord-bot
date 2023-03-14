@@ -18,8 +18,6 @@ class pages(discord.ui.View):
     @discord.ui.button(label='Previous', style=discord.ButtonStyle.grey, disabled=True)
     async def previous(self, interaction: discord.Interaction, button: discord.ui.Button):
         self.current_page -= 1
-        image = cat.image()
-        self.pages[self.current_page].set_image(url=image)
 
         if self.current_page == 0:
             for i in self.children:
@@ -39,8 +37,6 @@ class pages(discord.ui.View):
     @discord.ui.button(label='Next', style=discord.ButtonStyle.grey)
     async def next(self, interaction: discord.Interaction, button: discord.ui.Button):
         self.current_page += 1
-        image = cat.image()
-        self.pages[self.current_page].set_image(url=image)
 
         if self.current_page == len(self.pages) - 1:
             for i in self.children:
@@ -59,7 +55,7 @@ class pages(discord.ui.View):
 
     async def interaction_check(self, interaction: discord.Interaction, /) -> bool:
         if interaction.user.id != self.interaction.user.id:
-            image = cat.image()
+            image = cat.image()[0]['url']
 
             embed = discord.Embed(title='Error', description="You can't use this button because you didn't start the command. Try running </breeds:1> and selecting \"list\".", color=discord.Colour.red())
             embed.set_image(url=image)
@@ -71,7 +67,7 @@ class pages(discord.ui.View):
 
 # Command
 async def getBreedInfo(interaction, breed):
-    image = cat.image(breed=breed)
+    image = cat.image(breed=breed)[0]['url']
     breedData = cat.get_breed_info(breed)
 
     embed = discord.Embed(title=breedData['name'], description=breedData['description'], color=discord.Colour(cat.embedColor))
@@ -86,7 +82,7 @@ async def getBreedInfo(interaction, breed):
     await interaction.response.send_message(embed=embed)
 
 async def getBreedStats(interaction, breed):
-    image = cat.image(breed=breed)
+    image = cat.image(breed=breed)[0]['url']
     breedData = cat.get_breed_info(breed)
 
     embed=discord.Embed(title=breedData['name'], color=discord.Colour(cat.embedColor))
@@ -107,7 +103,7 @@ async def getBreedStats(interaction, breed):
     await interaction.response.send_message(embed=embed)
 
 async def handleError(interaction):
-    image = cat.image()
+    image = cat.image()[0]['url']
 
     embed = discord.Embed(title='Error', description="This breed doesn't exist.\nPlease check you entered the corresponding 4 letter code for your chosen breed by running </breeds:1> and selecting \"list\".",color=discord.Colour.red())
     embed.set_image(url=image)
@@ -156,7 +152,11 @@ class breeds(commands.Cog):
                 embed.set_footer(text=f'Page {count} of {len(breeds) // 10 + 1}')
                 embeds.append(embed)
 
-            embeds[0].set_image(url=cat.image())
+            images = cat.image(limit=len(embeds))
+
+            for i in range(len(embeds)):
+                embeds[i].set_image(url=images[i]['url'])
+
             await interaction.response.send_message(embed=embeds[0], view=pages(interaction, embeds))
 
 # Cog setup

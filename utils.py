@@ -8,31 +8,28 @@ class Cat():
         self.embedColor = 0x3498DB
         self.subList = ['IllegallySmolCats', 'cats', 'Catloaf', 'Catswithjobs', 'WhatsWrongWithYourCat', 'blackcats', 'CatSlaps', 'SupermodelCats', 'CatsStandingUp', 'bigcatgifs', 'catbellies', 'catpictures', 'catpranks', 'catsareliquid', 'catsinsinks', 'catsinbusinessattire', 'catswhoyell', 'catswithjobs', 'cattaps', 'catsisuottafo', 'blep', 'fromkittentocat', 'holdmycatnip', 'jellybeantoes', 'kittens', 'kitting', 'kneadycats', 'mainecoons', 'murdermittens', 'nebelung', 'petthedamncat', 'pocketpussy', 'ragdolls', 'startledcats', 'stuffoncats', 'teefies', 'thecattrapisworking', 'tightpussy', 'toebeans', 'tuckedinkitties']
         self.keyList = ['']
+        self.token = ''
 
     # Fetching image
     def image(self, **args):
         breed = args.get('breed', None)
+        limit = args.get('limit', 1)
 
         if breed:
             r = requests.get(f'https://api.thecatapi.com/v1/images/search?mime_types=jpg,png&breed_ids={breed}', headers={'x-api-key': random.choice(self.keyList)})
-
-            return r.json()[0]['url']
+            return r.json()
         else:
-            r = requests.get('https://api.thecatapi.com/v1/images/search?mime_types=jpg,png', headers={'x-api-key': random.choice(self.keyList)})
-
-            return r.json()[0]['url']
+            r = requests.get(f'https://api.thecatapi.com/v1/images/search?mime_types=jpg,png&limit={limit}', headers={'x-api-key': random.choice(self.keyList)})
+            return r.json()
 
     # Fetching gif
     def gif(self):
         if random.randint(1, 2) == 1:
             r = requests.get('https://api.thecatapi.com/v1/images/search?mime_types=gif', headers={'x-api-key': random.choice(self.keyList)})
-
-            return r.json()[0]['url']
+            return r.json()
         else:
             r = requests.get('https://edgecats.net/all')
-
             gifLinks = [i.split('href="')[1].split('"')[0] for i in r.text.splitlines() if 'href="' in i]
-
             return random.choice(gifLinks)
 
     # Fetching fact

@@ -1,5 +1,6 @@
 # <-- Imports -->
 import grequests
+import requests
 import asyncio
 import json
 import os
@@ -23,8 +24,9 @@ class Bot(commands.Bot):
         await self.wait_until_ready()
         print(f'Logged in as {self.user}.')
 
+        hourlyPhoto.start()
+        scrapeVideos.start()
         rpc.start()
-        scrape.start()
 
 # <-- Tasks -->
 @tasks.loop(minutes=1)
@@ -33,7 +35,7 @@ async def rpc():
     await bot.change_presence(activity=activity)
 
 @tasks.loop(hours=1)
-async def scrape():
+async def scrapeVideos():
     log.info('Scraping videos from Reddit.')
 
     rs = (grequests.get(f'https://www.reddit.com/r/{u}.json?sort=hot&t=day&limit=100', headers=headers) for u in cat.subList)
@@ -49,9 +51,9 @@ async def scrape():
             'videos': []
         }
 
-    for i in responses:
+    for i, r in enumerate(responses):
         try:
-            subData = i.json()['data']['children']
+            subData = r.json()['data']['children']
 
             for i in subData:
                 obj = i['data']
@@ -70,40 +72,56 @@ async def scrape():
                     }
                 )
 
-        except KeyError:
-            logger.error(f"Error scraping videos from {i['data']['children'][0]['data']['subreddit']}.")
+        except Exception:
+            logger.error(f"Error scraping videos from r/{cat.subList[i]}.")
 
     with open('data.json', 'w', encoding='utf8') as f:
         f.write(json.dumps(data))
 
     log.success('Finished scraping videos from Reddit!')
 
-    # Send photos to webhook
+@tasks.loop(hours=1)
+async def hourlyPhoto():
     log.info('Sending photos to webhooks.')
 
     with open('data.json', 'r', encoding='utf8') as f:
         data = json.load(f)
 
-    image = cat.image()
+    image = cat.image()[0]['url']
+    for i in dict(data['webhooks']):
+        url = data['webhooks'][i]
 
-    for i in data['webhooks']:
-        webhook = DiscordWebhook(url=data['webhooks'][i], username='Cat Bot', avatar_url='https://cdn.discordapp.com/avatars/977774728540459008/99b98aa4a7368955a41fe7796cc876de.webp?size=512')
+        postData = {
+            "username": "Cat Bot",
+            "avatar_url": "https://cdn.discordapp.com/avatars/977774728540459008/99b98aa4a7368955a41fe7796cc876de.webp?size=512",
+            "embeds": [
+                {
+                    "title": "Hourly Cat Photo",
+                    "color": 0x3498DB,
+                    "image": {
+                        "url": image
+                    }
+                }
+            ]
+        }
 
-        embed = DiscordEmbed(title='Hourly Cat Photo', color=cat.embedColor)
-        embed.set_image(url=image)
+        result = requests.post(url, json=postData)
 
-        webhook.add_embed(embed)
-        webhook.execute()
+        if result.status_code == 404:
+            log.error(f'Error sending photo to webhook. Removing from schedule')
+            data['webhooks'].pop(i)
 
         await asyncio.sleep(2.5)
 
-    log.success('Finished sending photos to webhooks!')
+    with open('data.json', 'w', encoding='utf8') as f:
+        f.write(json.dumps(data))
+
+    log.success('Finished sending photos to webhooks.')
 
 # <-- Variables -->
 bot = Bot()
 cat = Cat()
 log = logger()
-token = ''
 headers = {
     'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
     'Accept-Encoding': 'gzip, deflate, br',
@@ -111,7 +129,6 @@ headers = {
     'User-Agent': 'Cat Bot - https://github.com/paintingofblue/thecatapi-discord-bot'
 }
 
-# Make the bot run exactly on the hour
 # This is to ensure that the hourly cat photo
 # is sent at the same time every hour
 log.warning('Waiting for the next hour to start.')
@@ -122,4 +139,4 @@ while True:
     if currentHour.hour != previousHour.hour:
         break
 
-bot.run(token)
+bot.run(cat.token)

@@ -13,9 +13,10 @@ class help(commands.Cog):
     @discord.app_commands.command(name = 'help', description = 'Sends a list of commands.')
 
     async def help(self, interaction: discord.Interaction):
-        image = cat.image()
+        image = cat.image()[0]['url']
 
-        embed=discord.Embed(title='Help', description='These are the commands that Cat Bot currently supports.', color=discord.Colour(cat.embedColor))
+        embed=discord.Embed(title='Help', description='This bot was made by [@gifkitties](https://twitter.com/gifkitties) on Twitter, and the source code can be found [here](https://github.com/paintingofblue/thecatapi-discord-bot).\n\nHere are the commands that Cat Bot currently supports:\n', color=discord.Colour(cat.embedColor))
+
         embed.add_field(name='Gif', value='Sends a cat gif.', inline=False)
         embed.add_field(name='Image', value='Sends a cat image.\nInputting a breed ID will allow you to recieve images of a specific cat breed.', inline=False)
         embed.add_field(name='Fact', value='Sends a fact about cats.', inline=False)
