@@ -8,7 +8,7 @@ greenStar = ':green_square:'
 blackStar = ':black_large_square:'
 
 # Buttons
-class pages(discord.ui.View):
+class Pages(discord.ui.View):
     def __init__(self, interaction: discord.Interaction, pages: list):
         super().__init__(timeout=None)
         self.pages = pages
@@ -16,7 +16,7 @@ class pages(discord.ui.View):
         self.current_page = 0
 
     @discord.ui.button(label='Previous', style=discord.ButtonStyle.grey, disabled=True)
-    async def previous(self, interaction: discord.Interaction, button: discord.ui.Button):
+    async def previous(self, interaction: discord.Interaction, _button: discord.ui.Button):
         self.current_page -= 1
 
         if self.current_page == 0:
@@ -35,7 +35,7 @@ class pages(discord.ui.View):
         await interaction.response.edit_message(embed=self.pages[self.current_page], view=self)
 
     @discord.ui.button(label='Next', style=discord.ButtonStyle.grey)
-    async def next(self, interaction: discord.Interaction, button: discord.ui.Button):
+    async def next(self, interaction: discord.Interaction, _button: discord.ui.Button):
         self.current_page += 1
 
         if self.current_page == len(self.pages) - 1:
@@ -53,7 +53,7 @@ class pages(discord.ui.View):
 
         await interaction.response.edit_message(embed=self.pages[self.current_page], view=self)
 
-    async def interaction_check(self, interaction: discord.Interaction, /) -> bool:
+    async def interaction_check(self, interaction: discord.Interaction):
         if interaction.user.id != self.interaction.user.id:
             image = cat.image()[0]['url']
 
@@ -157,7 +157,7 @@ class breeds(commands.Cog):
             for i in range(len(embeds)):
                 embeds[i].set_image(url=images[i]['url'])
 
-            await interaction.response.send_message(embed=embeds[0], view=pages(interaction, embeds))
+            await interaction.response.send_message(embed=embeds[0], view=Pages(interaction, embeds))
 
 # Cog setup
 async def setup(bot: commands.Bot):

@@ -6,7 +6,7 @@ from utils import Cat
 cat = Cat()
 
 # Command
-class fact(commands.Cog):
+class Fact(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
@@ -23,4 +23,4 @@ class fact(commands.Cog):
 
 # Cog setup
 async def setup(bot: commands.Bot):
-    await bot.add_cog(fact(bot))
+    await bot.add_cog(Fact(bot))

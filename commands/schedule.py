@@ -7,7 +7,7 @@ from utils import Cat
 cat = Cat()
 
 # Command
-class schedule(commands.Cog):
+class Schedule(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
@@ -92,4 +92,4 @@ async def handleResponse(interaction, type, text):
 
 # Cog setup
 async def setup(bot: commands.Bot):
-    await bot.add_cog(schedule(bot))
+    await bot.add_cog(Schedule(bot))
