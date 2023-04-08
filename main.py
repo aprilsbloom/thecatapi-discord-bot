@@ -86,13 +86,15 @@ async def hourlyPhoto():
     with open('data.json', 'r', encoding='utf8') as f:
         data = json.load(f)
 
+    pfp = bot.user.display_avatar
+
     image = cat.image()[0]['url']
     for i in dict(data['webhooks']):
         url = data['webhooks'][i]
 
         postData = {
             "username": "Cat Bot",
-            "avatar_url": "https://cdn.discordapp.com/avatars/977774728540459008/99b98aa4a7368955a41fe7796cc876de.webp?size=512",
+            "avatar_url": pfp,
             "embeds": [
                 {
                     "title": "Hourly Cat Photo",
